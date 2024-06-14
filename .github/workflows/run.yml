@@ -1,4 +1,4 @@
-name: Cron
+name: Get latest data
 
 on:
   workflow_dispatch:
