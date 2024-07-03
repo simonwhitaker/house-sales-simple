@@ -51,8 +51,6 @@ report_path = REPORT_DIR / f"{today.isoformat()}.md"
 with report_path.open("w") as f:
     for record in current_data:
         if record["unique_id"] not in previous_unique_ids:
-            line = (
-                f"{format_address(record)} ({date.fromisoformat(record['deed_date'])})"
-            )
+            line = format_address(record)
             f.write(f"* {line}\n")
-            print(f"{record['unique_id']}: {line})")
+            print(f"{record['unique_id']}: {line}")
