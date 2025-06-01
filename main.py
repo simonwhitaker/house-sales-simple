@@ -36,7 +36,7 @@ try:
     previous_data = DictReader(previous_data_path.open())
     previous_unique_ids = {record["unique_id"] for record in previous_data}
 except IndexError:
-    previous_unique_ids = {}
+    previous_unique_ids = set()
 
 # Download the latest data
 current_data_path = DATA_DIR / f"{today.isoformat()}.csv"
