@@ -25,8 +25,10 @@ def format_address(record: dict) -> str:
 
 
 CSV_DOWNLOAD_URL_FORMAT = "https://landregistry.data.gov.uk/app/ppd/ppd_data.csv?header=true&limit=all&min_date={min_date}&postcode={postcode_area}"
-DATA_DIR_ROOT = Path("data")
-REPORT_DIR = Path("reports")
+
+
+DATA_DIR_ROOT = Path(__file__).parent / "data"
+REPORT_DIR = Path(__file__).parent / "reports"
 
 today = date.today()
 min_date = today - timedelta(days=180)
