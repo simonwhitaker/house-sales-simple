@@ -1,7 +1,8 @@
 from csv import DictReader
 from datetime import date, timedelta
 from pathlib import Path
-from urllib.request import urlopen
+
+import requests
 
 
 def format_address(record: dict) -> str:
@@ -41,9 +42,9 @@ except IndexError:
 # Download the latest data
 current_data_path = DATA_DIR / f"{today.isoformat()}.csv"
 url = CSV_DOWNLOAD_URL_FORMAT.format(min_date=min_date, postcode_area="L23")
-resp = urlopen(url)
+resp = requests.get(url)
 with current_data_path.open("w") as f:
-    f.write(resp.read().decode("utf-8"))
+    f.write(resp.text)
 
 # Read in the latest data, report on any sales we haven't previously seen
 current_data = DictReader(current_data_path.open())
