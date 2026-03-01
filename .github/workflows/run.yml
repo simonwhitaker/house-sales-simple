@@ -29,4 +29,9 @@ jobs:
       - name: Get latest data
         run: uv run python main.py
 
+      - name: Delete old reports
+        run: |
+          latest_report="$(ls -1 reports/*.md | sort | tail -n 1)"
+          find reports -maxdepth 1 -type f -name "*.md" ! -path "$latest_report" -delete
+
       - uses: EndBug/add-and-commit@v9
