@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Sales Report &mdash; 2025-08-01</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
+    header h1 { font-size: 1.5rem; font-weight: 600; }
+    header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { text-decoration: underline; }
+    #map { height: 500px; width: 100%; }
+    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
+    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    th { background: #34495e; color: white; font-weight: 500; }
+    tr:hover { background: #f9f9f9; }
+    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; All reports</a>
+    <h1>House Sales Report &mdash; 2025-08-01</h1>
+  </header>
+  <div id="map"></div>
+  <div class="container">
+    <p class="summary">22 new sale(s) detected.</p>
+    <table>
+      <thead>
+        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>65 Myers Road East, L23 0QX</td>
+          <td>2025-05-09</td>
+          <td>&pound;331,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>7 Dudley Grove, L23 0SJ</td>
+          <td>2025-05-23</td>
+          <td>&pound;350,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>14 Enfield Avenue, L23 0SZ</td>
+          <td>2025-05-23</td>
+          <td>&pound;300,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>11A Seafield Avenue, L23 0TG</td>
+          <td>2025-05-30</td>
+          <td>&pound;225,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>47 Seafield Avenue, L23 0TG</td>
+          <td>2025-06-04</td>
+          <td>&pound;270,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>41 Brownmoor Park, L23 0TL</td>
+          <td>2025-04-17</td>
+          <td>&pound;355,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>26 Endbutt Lane, L23 0TR</td>
+          <td>2025-05-16</td>
+          <td>&pound;135,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>2 Rosedale Avenue, L23 0UQ</td>
+          <td>2025-05-23</td>
+          <td>&pound;235,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>41 Runnells Lane, L23 1XJ</td>
+          <td>2025-05-23</td>
+          <td>&pound;307,000</td>
+          <td>Detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>46 The Northern Road, L23 2RG</td>
+          <td>2025-03-27</td>
+          <td>&pound;355,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>12 Halsall Close, L23 2TR</td>
+          <td>2025-05-09</td>
+          <td>&pound;220,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>43 Sunnyside Road, L23 3AY</td>
+          <td>2025-06-03</td>
+          <td>&pound;337,500</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>35 Coronation Drive, L23 3BW</td>
+          <td>2025-06-13</td>
+          <td>&pound;410,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>62 Moor Lane, L23 4TW</td>
+          <td>2025-03-28</td>
+          <td>&pound;260,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 48, Sandalwood, 83, Coronation Road, L23 5UJ</td>
+          <td>2025-06-11</td>
+          <td>&pound;137,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>18 Manor Avenue, L23 7YB</td>
+          <td>2025-06-20</td>
+          <td>&pound;430,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>10 Spinney Crescent, L23 8TZ</td>
+          <td>2025-06-11</td>
+          <td>&pound;200,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>11 Eden Drive North, L23 9SP</td>
+          <td>2025-06-10</td>
+          <td>&pound;175,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>144 Brownmoor Lane, L23 9SQ</td>
+          <td>2025-05-19</td>
+          <td>&pound;42,999</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>38C Forefield Lane, L23 9TH</td>
+          <td>2025-05-28</td>
+          <td>&pound;325,000</td>
+          <td>Detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>15 Chester Close, L23 9TP</td>
+          <td>2025-06-05</td>
+          <td>&pound;113,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>84 Chesterfield Road, L23 9TS</td>
+          <td>2025-06-20</td>
+          <td>&pound;345,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var sales = [];
+    var map = L.map('map').setView([53.48, -3.04], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+    var bounds = [];
+    sales.forEach(function(s) {
+      var marker = L.marker([s.lat, s.lng]).addTo(map);
+      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
+      marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
+      bounds.push([s.lat, s.lng]);
+    });
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  </script>
+</body>
+</html>

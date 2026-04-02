@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Sales Report &mdash; 2024-12-01</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
+    header h1 { font-size: 1.5rem; font-weight: 600; }
+    header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { text-decoration: underline; }
+    #map { height: 500px; width: 100%; }
+    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
+    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    th { background: #34495e; color: white; font-weight: 500; }
+    tr:hover { background: #f9f9f9; }
+    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; All reports</a>
+    <h1>House Sales Report &mdash; 2024-12-01</h1>
+  </header>
+  <div id="map"></div>
+  <div class="container">
+    <p class="summary">26 new sale(s) detected.</p>
+    <table>
+      <thead>
+        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>18 Rothesay Drive, L23 0RF</td>
+          <td>2024-09-11</td>
+          <td>&pound;335,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>14 Grosvenor Avenue, L23 0SB</td>
+          <td>2024-10-16</td>
+          <td>&pound;399,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>20 Land Mark Close, L23 1AJ</td>
+          <td>2024-09-06</td>
+          <td>&pound;251,750</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 21, Grove Court, 20, Moor Lane, L23 2AA</td>
+          <td>2024-10-04</td>
+          <td>&pound;249,950</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>35 Moorside Road, L23 2RS</td>
+          <td>2024-08-09</td>
+          <td>&pound;362,500</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>24 Old Farm Road, L23 2RZ</td>
+          <td>2024-09-20</td>
+          <td>&pound;320,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>27 Avon Court, L23 2SD</td>
+          <td>2024-10-01</td>
+          <td>&pound;140,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>35 Oaklands Avenue, L23 2TN</td>
+          <td>2024-10-16</td>
+          <td>&pound;242,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>41 Avon Court, L23 2XQ</td>
+          <td>2024-10-03</td>
+          <td>&pound;180,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>19 Waverley Road, L23 3AJ</td>
+          <td>2024-08-23</td>
+          <td>&pound;360,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>36 Sunnyside Road, L23 3AZ</td>
+          <td>2024-09-11</td>
+          <td>&pound;232,200</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>48 Crosender Road, L23 3BB</td>
+          <td>2024-09-06</td>
+          <td>&pound;175,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>16 Warwick Avenue, L23 3BS</td>
+          <td>2024-10-04</td>
+          <td>&pound;265,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>2 Saxon Road, L23 3DJ</td>
+          <td>2024-06-12</td>
+          <td>&pound;276,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>10 St Lukes Road, L23 5SZ</td>
+          <td>2024-07-17</td>
+          <td>&pound;200,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Apartment 16, Waters Edge, 53, Burbo Bank Road, L23 6TQ</td>
+          <td>2024-06-07</td>
+          <td>&pound;262,500</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Apartment 20, Waters Edge, 53, Burbo Bank Road, L23 6TQ</td>
+          <td>2024-08-30</td>
+          <td>&pound;208,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>14 Holyrood, L23 6WG</td>
+          <td>2024-09-18</td>
+          <td>&pound;319,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>3 Almacs Close, L23 6XT</td>
+          <td>2024-09-26</td>
+          <td>&pound;595,000</td>
+          <td>Detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>12 Ramleh Park, L23 6YD</td>
+          <td>2024-09-26</td>
+          <td>&pound;375,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>7 Kings Road, L23 7TN</td>
+          <td>2024-09-30</td>
+          <td>&pound;185,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>33 Cambridge Road, L23 7TU</td>
+          <td>2024-10-14</td>
+          <td>&pound;100,340</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>2 Miller Avenue, L23 7YA</td>
+          <td>2024-10-03</td>
+          <td>&pound;367,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 17, Sandhurst, Blundellsands Road East, L23 8UJ</td>
+          <td>2024-09-06</td>
+          <td>&pound;140,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>27 College Road North, L23 8UR</td>
+          <td>2024-07-10</td>
+          <td>&pound;590,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>37 Rimrose Valley Road, L23 9TF</td>
+          <td>2024-10-03</td>
+          <td>&pound;215,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var sales = [];
+    var map = L.map('map').setView([53.48, -3.04], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+    var bounds = [];
+    sales.forEach(function(s) {
+      var marker = L.marker([s.lat, s.lng]).addTo(map);
+      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
+      marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
+      bounds.push([s.lat, s.lng]);
+    });
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  </script>
+</body>
+</html>
