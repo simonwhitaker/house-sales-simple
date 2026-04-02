@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,233 +27,44 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2025-11-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">31 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Flat 6, Copper Box, 9, Crosby Road North, L22 0AE</td>
-          <td>2025-06-03</td>
-          <td>&pound;120,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>4 Argo Road, L22 0NW</td>
-          <td>2025-08-21</td>
-          <td>&pound;210,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>55 Brooke Road East, L22 2AN</td>
-          <td>2025-09-15</td>
-          <td>&pound;270,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>8 Winchester Avenue, L22 2AT</td>
-          <td>2025-08-11</td>
-          <td>&pound;240,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>4 Parklands Way, L22 3YX</td>
-          <td>2025-08-22</td>
-          <td>&pound;405,000</td>
-          <td>Detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>66 Stuart Road, L22 4QT</td>
-          <td>2025-08-26</td>
-          <td>&pound;208,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>10 Warrenhouse Road, L22 6QN</td>
-          <td>2025-09-04</td>
-          <td>&pound;210,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>78 Warrenhouse Road, L22 6QP</td>
-          <td>2025-09-15</td>
-          <td>&pound;205,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>8 Blucher Street, L22 8QB</td>
-          <td>2025-08-05</td>
-          <td>&pound;525,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>153 St Johns Road, L22 9QE</td>
-          <td>2025-08-05</td>
-          <td>&pound;275,000</td>
-          <td>Other</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>47 Lawton Road, L22 9QJ</td>
-          <td>2025-09-12</td>
-          <td>&pound;230,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>35 Vogan Avenue, L23 0SG</td>
-          <td>2025-08-21</td>
-          <td>&pound;230,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>6 Derwent Road, L23 0SX</td>
-          <td>2025-09-05</td>
-          <td>&pound;220,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>95 Endbutt Lane, L23 0TX</td>
-          <td>2025-08-29</td>
-          <td>&pound;380,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>20 Moorlands Road, L23 1US</td>
-          <td>2025-08-18</td>
-          <td>&pound;189,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>5 Stannyfield Close, L23 1ZA</td>
-          <td>2025-09-11</td>
-          <td>&pound;225,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>19 Abbotsford Gardens, L23 3AP</td>
-          <td>2025-08-26</td>
-          <td>&pound;381,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>31 Sunnyside Road, L23 3AY</td>
-          <td>2025-08-29</td>
-          <td>&pound;345,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>14 Crosender Road, L23 3BB</td>
-          <td>2025-05-23</td>
-          <td>&pound;212,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>28 Princes Avenue, L23 5RR</td>
-          <td>2025-09-22</td>
-          <td>&pound;415,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>13 St Lukes Road, L23 5SY</td>
-          <td>2025-08-29</td>
-          <td>&pound;245,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 1, Sandalwood, 83, Coronation Road, L23 5UJ</td>
-          <td>2025-08-08</td>
-          <td>&pound;122,500</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 36, Sandalwood, 83, Coronation Road, L23 5UJ</td>
-          <td>2025-08-19</td>
-          <td>&pound;150,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>23 Nicholas Road, L23 6TT</td>
-          <td>2025-08-26</td>
-          <td>&pound;570,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>5, Elsinore Court, Abbotsford Road, L23 6WE</td>
-          <td>2025-08-29</td>
-          <td>&pound;160,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>24 Holyrood, L23 6WG</td>
-          <td>2025-09-08</td>
-          <td>&pound;260,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 14, Gaywood Court, Nicholas Road, L23 6XN</td>
-          <td>2025-08-22</td>
-          <td>&pound;199,950</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10 Halltine Close, L23 6XX</td>
-          <td>2025-08-11</td>
-          <td>&pound;432,500</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>5 Cambridge Road, L23 7TS</td>
-          <td>2025-08-04</td>
-          <td>&pound;458,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>19 Roehampton Drive, L23 7XD</td>
-          <td>2025-08-22</td>
-          <td>&pound;765,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10, Linkside Court, Richard Road, L23 8TF</td>
-          <td>2025-09-02</td>
-          <td>&pound;220,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">31 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">Flat 6, Copper Box, 9, Crosby Road North, L22 0AE</li>
+        <li data-index="1">4 Argo Road, L22 0NW</li>
+        <li data-index="2">55 Brooke Road East, L22 2AN</li>
+        <li data-index="3">8 Winchester Avenue, L22 2AT</li>
+        <li data-index="4">4 Parklands Way, L22 3YX</li>
+        <li data-index="5">66 Stuart Road, L22 4QT</li>
+        <li data-index="6">10 Warrenhouse Road, L22 6QN</li>
+        <li data-index="7">78 Warrenhouse Road, L22 6QP</li>
+        <li data-index="8">8 Blucher Street, L22 8QB</li>
+        <li data-index="9">153 St Johns Road, L22 9QE</li>
+        <li data-index="10">47 Lawton Road, L22 9QJ</li>
+        <li data-index="11">35 Vogan Avenue, L23 0SG</li>
+        <li data-index="12">6 Derwent Road, L23 0SX</li>
+        <li data-index="13">95 Endbutt Lane, L23 0TX</li>
+        <li data-index="14">20 Moorlands Road, L23 1US</li>
+        <li data-index="15">5 Stannyfield Close, L23 1ZA</li>
+        <li data-index="16">19 Abbotsford Gardens, L23 3AP</li>
+        <li data-index="17">31 Sunnyside Road, L23 3AY</li>
+        <li data-index="18">14 Crosender Road, L23 3BB</li>
+        <li data-index="19">28 Princes Avenue, L23 5RR</li>
+        <li data-index="20">13 St Lukes Road, L23 5SY</li>
+        <li data-index="21">Flat 1, Sandalwood, 83, Coronation Road, L23 5UJ</li>
+        <li data-index="22">Flat 36, Sandalwood, 83, Coronation Road, L23 5UJ</li>
+        <li data-index="23">23 Nicholas Road, L23 6TT</li>
+        <li data-index="24">5, Elsinore Court, Abbotsford Road, L23 6WE</li>
+        <li data-index="25">24 Holyrood, L23 6WG</li>
+        <li data-index="26">Flat 14, Gaywood Court, Nicholas Road, L23 6XN</li>
+        <li data-index="27">10 Halltine Close, L23 6XX</li>
+        <li data-index="28">5 Cambridge Road, L23 7TS</li>
+        <li data-index="29">19 Roehampton Drive, L23 7XD</li>
+        <li data-index="30">10, Linkside Court, Richard Road, L23 8TF</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -262,16 +74,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

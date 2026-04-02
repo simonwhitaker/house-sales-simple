@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,170 +27,35 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2025-08-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">22 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>65 Myers Road East, L23 0QX</td>
-          <td>2025-05-09</td>
-          <td>&pound;331,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Dudley Grove, L23 0SJ</td>
-          <td>2025-05-23</td>
-          <td>&pound;350,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>14 Enfield Avenue, L23 0SZ</td>
-          <td>2025-05-23</td>
-          <td>&pound;300,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>11A Seafield Avenue, L23 0TG</td>
-          <td>2025-05-30</td>
-          <td>&pound;225,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>47 Seafield Avenue, L23 0TG</td>
-          <td>2025-06-04</td>
-          <td>&pound;270,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>41 Brownmoor Park, L23 0TL</td>
-          <td>2025-04-17</td>
-          <td>&pound;355,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>26 Endbutt Lane, L23 0TR</td>
-          <td>2025-05-16</td>
-          <td>&pound;135,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>2 Rosedale Avenue, L23 0UQ</td>
-          <td>2025-05-23</td>
-          <td>&pound;235,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>41 Runnells Lane, L23 1XJ</td>
-          <td>2025-05-23</td>
-          <td>&pound;307,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>46 The Northern Road, L23 2RG</td>
-          <td>2025-03-27</td>
-          <td>&pound;355,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>12 Halsall Close, L23 2TR</td>
-          <td>2025-05-09</td>
-          <td>&pound;220,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>43 Sunnyside Road, L23 3AY</td>
-          <td>2025-06-03</td>
-          <td>&pound;337,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>35 Coronation Drive, L23 3BW</td>
-          <td>2025-06-13</td>
-          <td>&pound;410,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>62 Moor Lane, L23 4TW</td>
-          <td>2025-03-28</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 48, Sandalwood, 83, Coronation Road, L23 5UJ</td>
-          <td>2025-06-11</td>
-          <td>&pound;137,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>18 Manor Avenue, L23 7YB</td>
-          <td>2025-06-20</td>
-          <td>&pound;430,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10 Spinney Crescent, L23 8TZ</td>
-          <td>2025-06-11</td>
-          <td>&pound;200,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>11 Eden Drive North, L23 9SP</td>
-          <td>2025-06-10</td>
-          <td>&pound;175,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>144 Brownmoor Lane, L23 9SQ</td>
-          <td>2025-05-19</td>
-          <td>&pound;42,999</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>38C Forefield Lane, L23 9TH</td>
-          <td>2025-05-28</td>
-          <td>&pound;325,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>15 Chester Close, L23 9TP</td>
-          <td>2025-06-05</td>
-          <td>&pound;113,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>84 Chesterfield Road, L23 9TS</td>
-          <td>2025-06-20</td>
-          <td>&pound;345,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">22 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">65 Myers Road East, L23 0QX</li>
+        <li data-index="1">7 Dudley Grove, L23 0SJ</li>
+        <li data-index="2">14 Enfield Avenue, L23 0SZ</li>
+        <li data-index="3">11A Seafield Avenue, L23 0TG</li>
+        <li data-index="4">47 Seafield Avenue, L23 0TG</li>
+        <li data-index="5">41 Brownmoor Park, L23 0TL</li>
+        <li data-index="6">26 Endbutt Lane, L23 0TR</li>
+        <li data-index="7">2 Rosedale Avenue, L23 0UQ</li>
+        <li data-index="8">41 Runnells Lane, L23 1XJ</li>
+        <li data-index="9">46 The Northern Road, L23 2RG</li>
+        <li data-index="10">12 Halsall Close, L23 2TR</li>
+        <li data-index="11">43 Sunnyside Road, L23 3AY</li>
+        <li data-index="12">35 Coronation Drive, L23 3BW</li>
+        <li data-index="13">62 Moor Lane, L23 4TW</li>
+        <li data-index="14">Flat 48, Sandalwood, 83, Coronation Road, L23 5UJ</li>
+        <li data-index="15">18 Manor Avenue, L23 7YB</li>
+        <li data-index="16">10 Spinney Crescent, L23 8TZ</li>
+        <li data-index="17">11 Eden Drive North, L23 9SP</li>
+        <li data-index="18">144 Brownmoor Lane, L23 9SQ</li>
+        <li data-index="19">38C Forefield Lane, L23 9TH</li>
+        <li data-index="20">15 Chester Close, L23 9TP</li>
+        <li data-index="21">84 Chesterfield Road, L23 9TS</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -199,16 +65,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

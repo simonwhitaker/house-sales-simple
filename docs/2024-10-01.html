@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,170 +27,35 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2024-10-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">22 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>21 Myers Road East, L23 0QS</td>
-          <td>2024-04-18</td>
-          <td>&pound;290,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>8 Whitham Avenue, L23 0RD</td>
-          <td>2024-07-29</td>
-          <td>&pound;275,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>75 Seafield Avenue, L23 0TG</td>
-          <td>2024-07-05</td>
-          <td>&pound;295,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Wylva Avenue, L23 0TH</td>
-          <td>2024-04-12</td>
-          <td>&pound;278,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>15 Westbourne Avenue, L23 1UP</td>
-          <td>2024-08-09</td>
-          <td>&pound;220,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Moorside Close, L23 2RL</td>
-          <td>2024-08-09</td>
-          <td>&pound;325,999</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Park Avenue, L23 2SP</td>
-          <td>2024-08-09</td>
-          <td>&pound;515,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>31 Woodville Avenue, L23 3BX</td>
-          <td>2024-04-29</td>
-          <td>&pound;440,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>34 Moor Lane, L23 4TW</td>
-          <td>2024-07-26</td>
-          <td>&pound;245,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>46 York Road, L23 5TT</td>
-          <td>2024-08-16</td>
-          <td>&pound;210,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 17, The Knowles, 2, Blundellsands Road West, L23 6AB</td>
-          <td>2024-05-30</td>
-          <td>&pound;370,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10 Sand Dune Close, L23 6AE</td>
-          <td>2024-06-06</td>
-          <td>&pound;750,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Apartment 2, Blundellsands Classic, 19, Blundellsands Road West, L23 6BA</td>
-          <td>2024-08-05</td>
-          <td>&pound;290,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10, Bronshill, The Serpentine South, L23 6XG</td>
-          <td>2024-08-05</td>
-          <td>&pound;180,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>14 Cambridge Road, L23 7TY</td>
-          <td>2024-08-08</td>
-          <td>&pound;167,500</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>123 Manor Road, L23 7UT</td>
-          <td>2024-08-05</td>
-          <td>&pound;546,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>28 Manor Road, L23 7XJ</td>
-          <td>2024-07-26</td>
-          <td>&pound;375,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>26 Burbo Bank Road North, L23 8TA</td>
-          <td>2024-04-11</td>
-          <td>&pound;847,500</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>51 Eshe Road North, L23 8UE</td>
-          <td>2024-08-05</td>
-          <td>&pound;690,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>57 Forefield Lane, L23 9TQ</td>
-          <td>2024-07-10</td>
-          <td>&pound;425,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>19 Moorfield Road, L23 9UB</td>
-          <td>2024-06-28</td>
-          <td>&pound;295,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>33 Hillcrest Road, L23 9XS</td>
-          <td>2024-08-15</td>
-          <td>&pound;482,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">22 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">21 Myers Road East, L23 0QS</li>
+        <li data-index="1">8 Whitham Avenue, L23 0RD</li>
+        <li data-index="2">75 Seafield Avenue, L23 0TG</li>
+        <li data-index="3">7 Wylva Avenue, L23 0TH</li>
+        <li data-index="4">15 Westbourne Avenue, L23 1UP</li>
+        <li data-index="5">7 Moorside Close, L23 2RL</li>
+        <li data-index="6">7 Park Avenue, L23 2SP</li>
+        <li data-index="7">31 Woodville Avenue, L23 3BX</li>
+        <li data-index="8">34 Moor Lane, L23 4TW</li>
+        <li data-index="9">46 York Road, L23 5TT</li>
+        <li data-index="10">Flat 17, The Knowles, 2, Blundellsands Road West, L23 6AB</li>
+        <li data-index="11">10 Sand Dune Close, L23 6AE</li>
+        <li data-index="12">Apartment 2, Blundellsands Classic, 19, Blundellsands Road West, L23 6BA</li>
+        <li data-index="13">10, Bronshill, The Serpentine South, L23 6XG</li>
+        <li data-index="14">14 Cambridge Road, L23 7TY</li>
+        <li data-index="15">123 Manor Road, L23 7UT</li>
+        <li data-index="16">28 Manor Road, L23 7XJ</li>
+        <li data-index="17">26 Burbo Bank Road North, L23 8TA</li>
+        <li data-index="18">51 Eshe Road North, L23 8UE</li>
+        <li data-index="19">57 Forefield Lane, L23 9TQ</li>
+        <li data-index="20">19 Moorfield Road, L23 9UB</li>
+        <li data-index="21">33 Hillcrest Road, L23 9XS</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -199,16 +65,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,184 +27,37 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2024-08-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">24 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>138 Stuart Road, L23 0QQ</td>
-          <td>2024-05-17</td>
-          <td>&pound;231,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>9 Myers Road East, L23 0QS</td>
-          <td>2024-05-17</td>
-          <td>&pound;290,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>15A Dorbett Drive, L23 0RY</td>
-          <td>2024-05-17</td>
-          <td>&pound;261,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>18 Derwent Road, L23 0SX</td>
-          <td>2024-05-23</td>
-          <td>&pound;240,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>58 Endbutt Lane, L23 0TY</td>
-          <td>2024-06-24</td>
-          <td>&pound;315,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>1 Rowena Close, L23 2RP</td>
-          <td>2024-05-31</td>
-          <td>&pound;333,045</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>4 Moorside Road, L23 2RR</td>
-          <td>2024-05-03</td>
-          <td>&pound;290,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>4 Willow Way, L23 2TP</td>
-          <td>2024-02-28</td>
-          <td>&pound;340,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 4, 53 Rossett Road, L23 3AN</td>
-          <td>2024-03-22</td>
-          <td>&pound;110,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>80 Coronation Drive, L23 3BP</td>
-          <td>2024-05-23</td>
-          <td>&pound;460,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>9 Woodland View, L23 4UH</td>
-          <td>2024-05-17</td>
-          <td>&pound;320,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>89 York Road, L23 5TT</td>
-          <td>2024-03-11</td>
-          <td>&pound;201,450</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 2, Sandalwood, 83, Coronation Road, L23 5UJ</td>
-          <td>2024-06-07</td>
-          <td>&pound;132,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 20, Sandalwood, 83, Coronation Road, L23 5UJ</td>
-          <td>2024-02-08</td>
-          <td>&pound;70,831</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 3, Weston Court, Burbo Bank Road South, L23 6SR</td>
-          <td>2024-05-30</td>
-          <td>&pound;315,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>24 Fountain Court, L23 6TL</td>
-          <td>2024-06-14</td>
-          <td>&pound;250,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 42, Somerford House, 2, Nicholas Road, L23 6TS</td>
-          <td>2024-04-26</td>
-          <td>&pound;110,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>1 Ramleh Park, L23 6YD</td>
-          <td>2024-06-21</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>14 Manor Avenue, L23 7YB</td>
-          <td>2024-02-23</td>
-          <td>&pound;375,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>22 Burbo Bank Road North, L23 8TA</td>
-          <td>2024-05-31</td>
-          <td>&pound;1,250,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 3, 37 Hall Road East, L23 8TT</td>
-          <td>2024-02-12</td>
-          <td>&pound;350,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>24 Bellair Avenue, L23 9SW</td>
-          <td>2024-06-14</td>
-          <td>&pound;245,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>24 Forefield Lane, L23 9TH</td>
-          <td>2024-05-17</td>
-          <td>&pound;411,800</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>29 Ronaldsway, L23 9XU</td>
-          <td>2024-02-12</td>
-          <td>&pound;305,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">24 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">138 Stuart Road, L23 0QQ</li>
+        <li data-index="1">9 Myers Road East, L23 0QS</li>
+        <li data-index="2">15A Dorbett Drive, L23 0RY</li>
+        <li data-index="3">18 Derwent Road, L23 0SX</li>
+        <li data-index="4">58 Endbutt Lane, L23 0TY</li>
+        <li data-index="5">1 Rowena Close, L23 2RP</li>
+        <li data-index="6">4 Moorside Road, L23 2RR</li>
+        <li data-index="7">4 Willow Way, L23 2TP</li>
+        <li data-index="8">Flat 4, 53 Rossett Road, L23 3AN</li>
+        <li data-index="9">80 Coronation Drive, L23 3BP</li>
+        <li data-index="10">9 Woodland View, L23 4UH</li>
+        <li data-index="11">89 York Road, L23 5TT</li>
+        <li data-index="12">Flat 2, Sandalwood, 83, Coronation Road, L23 5UJ</li>
+        <li data-index="13">Flat 20, Sandalwood, 83, Coronation Road, L23 5UJ</li>
+        <li data-index="14">Flat 3, Weston Court, Burbo Bank Road South, L23 6SR</li>
+        <li data-index="15">24 Fountain Court, L23 6TL</li>
+        <li data-index="16">Flat 42, Somerford House, 2, Nicholas Road, L23 6TS</li>
+        <li data-index="17">1 Ramleh Park, L23 6YD</li>
+        <li data-index="18">14 Manor Avenue, L23 7YB</li>
+        <li data-index="19">22 Burbo Bank Road North, L23 8TA</li>
+        <li data-index="20">Flat 3, 37 Hall Road East, L23 8TT</li>
+        <li data-index="21">24 Bellair Avenue, L23 9SW</li>
+        <li data-index="22">24 Forefield Lane, L23 9TH</li>
+        <li data-index="23">29 Ronaldsway, L23 9XU</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -213,16 +67,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

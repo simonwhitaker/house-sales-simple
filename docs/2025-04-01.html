@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,191 +27,38 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2025-04-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">25 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>56 Myers Road East, L23 0QZ</td>
-          <td>2025-02-03</td>
-          <td>&pound;232,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>39 Myers Road West, L23 0RT</td>
-          <td>2024-10-14</td>
-          <td>&pound;330,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>11 Mornington Avenue, L23 0SA</td>
-          <td>2025-02-06</td>
-          <td>&pound;375,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>3 Brownmoor Lane, L23 0TD</td>
-          <td>2025-02-14</td>
-          <td>&pound;400,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>83 Endbutt Lane, L23 0TU</td>
-          <td>2024-10-04</td>
-          <td>&pound;250,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>13 Kershaw Avenue, L23 0UL</td>
-          <td>2025-02-07</td>
-          <td>&pound;150,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>6 Sundial Close, L23 1AG</td>
-          <td>2024-11-29</td>
-          <td>&pound;195,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>64 The Northern Road, L23 2RQ</td>
-          <td>2025-01-27</td>
-          <td>&pound;415,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Avon Court, L23 2SD</td>
-          <td>2025-02-14</td>
-          <td>&pound;137,500</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>26 Avon Court, L23 2SD</td>
-          <td>2025-01-17</td>
-          <td>&pound;165,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>6 Ivanhoe Road, L23 3AH</td>
-          <td>2025-02-07</td>
-          <td>&pound;517,252</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>26 Rossett Road, L23 3AW</td>
-          <td>2025-02-07</td>
-          <td>&pound;365,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>68 Sunnyside Road, L23 3AZ</td>
-          <td>2024-12-20</td>
-          <td>&pound;248,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>74 Southport Road, L23 4TH</td>
-          <td>2024-10-04</td>
-          <td>&pound;407,500</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>41 York Avenue, L23 5RN</td>
-          <td>2025-01-24</td>
-          <td>&pound;320,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 17, Rutland House, Nicholas Road, L23 6TT</td>
-          <td>2024-12-03</td>
-          <td>&pound;225,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>8 Cavendish Road, L23 6XB</td>
-          <td>2024-10-03</td>
-          <td>&pound;445,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>47 Ennismore Road, L23 7UQ</td>
-          <td>2024-10-15</td>
-          <td>&pound;590,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>111 Manor Road, L23 7UT</td>
-          <td>2024-10-11</td>
-          <td>&pound;605,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>7 Ince Avenue, L23 7XE</td>
-          <td>2025-01-20</td>
-          <td>&pound;282,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>130 Brownmoor Lane, L23 9SG</td>
-          <td>2025-01-31</td>
-          <td>&pound;319,995</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>31 Hillary Drive, L23 9SY</td>
-          <td>2025-01-31</td>
-          <td>&pound;205,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>4 Elmwood Avenue, L23 9XR</td>
-          <td>2025-02-24</td>
-          <td>&pound;165,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>29 Hillcrest Road, L23 9XS</td>
-          <td>2025-01-24</td>
-          <td>&pound;370,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>12 Thornfield Road, L23 9XZ</td>
-          <td>2025-02-07</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">25 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">56 Myers Road East, L23 0QZ</li>
+        <li data-index="1">39 Myers Road West, L23 0RT</li>
+        <li data-index="2">11 Mornington Avenue, L23 0SA</li>
+        <li data-index="3">3 Brownmoor Lane, L23 0TD</li>
+        <li data-index="4">83 Endbutt Lane, L23 0TU</li>
+        <li data-index="5">13 Kershaw Avenue, L23 0UL</li>
+        <li data-index="6">6 Sundial Close, L23 1AG</li>
+        <li data-index="7">64 The Northern Road, L23 2RQ</li>
+        <li data-index="8">7 Avon Court, L23 2SD</li>
+        <li data-index="9">26 Avon Court, L23 2SD</li>
+        <li data-index="10">6 Ivanhoe Road, L23 3AH</li>
+        <li data-index="11">26 Rossett Road, L23 3AW</li>
+        <li data-index="12">68 Sunnyside Road, L23 3AZ</li>
+        <li data-index="13">74 Southport Road, L23 4TH</li>
+        <li data-index="14">41 York Avenue, L23 5RN</li>
+        <li data-index="15">Flat 17, Rutland House, Nicholas Road, L23 6TT</li>
+        <li data-index="16">8 Cavendish Road, L23 6XB</li>
+        <li data-index="17">47 Ennismore Road, L23 7UQ</li>
+        <li data-index="18">111 Manor Road, L23 7UT</li>
+        <li data-index="19">7 Ince Avenue, L23 7XE</li>
+        <li data-index="20">130 Brownmoor Lane, L23 9SG</li>
+        <li data-index="21">31 Hillary Drive, L23 9SY</li>
+        <li data-index="22">4 Elmwood Avenue, L23 9XR</li>
+        <li data-index="23">29 Hillcrest Road, L23 9XS</li>
+        <li data-index="24">12 Thornfield Road, L23 9XZ</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -220,16 +68,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

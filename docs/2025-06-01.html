@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,240 +27,45 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2025-06-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">32 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>31 Myers Road East, L23 0QU</td>
-          <td>2025-03-27</td>
-          <td>&pound;300,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>2, Myers Lodge, Myers Road East, L23 0QX</td>
-          <td>2025-03-27</td>
-          <td>&pound;230,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>46 College Road, L23 0RP</td>
-          <td>2025-03-28</td>
-          <td>&pound;355,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>2 Caithness Drive, L23 0RQ</td>
-          <td>2025-04-04</td>
-          <td>&pound;255,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>30 Marldon Avenue, L23 0SL</td>
-          <td>2025-03-31</td>
-          <td>&pound;400,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>21 Nazeby Avenue, L23 0SN</td>
-          <td>2025-04-04</td>
-          <td>&pound;215,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>15 Seafield Avenue, L23 0TG</td>
-          <td>2025-03-28</td>
-          <td>&pound;241,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>34 Wylva Avenue, L23 0TH</td>
-          <td>2025-02-21</td>
-          <td>&pound;211,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10 The Precincts, L23 0TP</td>
-          <td>2025-03-07</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>45C Moorgate Avenue, L23 0UE</td>
-          <td>2025-03-28</td>
-          <td>&pound;250,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>2 Musker Gardens, L23 0UT</td>
-          <td>2025-03-21</td>
-          <td>&pound;115,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>34 Lydiate Park, L23 1XL</td>
-          <td>2025-03-28</td>
-          <td>&pound;300,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>27 Orchard Dale, L23 2RJ</td>
-          <td>2025-03-28</td>
-          <td>&pound;360,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>37 Trevor Drive, L23 2RN</td>
-          <td>2025-03-28</td>
-          <td>&pound;300,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>22 Old Farm Road, L23 2RZ</td>
-          <td>2025-03-31</td>
-          <td>&pound;340,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>47 Oaklands Avenue, L23 2TN</td>
-          <td>2025-03-24</td>
-          <td>&pound;255,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>21 Rossett Road, L23 3AN</td>
-          <td>2024-12-03</td>
-          <td>&pound;375,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>16 Harrington Road, L23 5ST</td>
-          <td>2025-03-27</td>
-          <td>&pound;170,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>62 Queens Road, L23 5TR</td>
-          <td>2025-03-28</td>
-          <td>&pound;230,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>10, Elsinore Court, Abbotsford Road, L23 6WE</td>
-          <td>2025-03-21</td>
-          <td>&pound;165,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>11 St Andrews Drive, L23 7UX</td>
-          <td>2025-03-14</td>
-          <td>&pound;360,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>5 Boundary Drive, L23 7UY</td>
-          <td>2025-03-17</td>
-          <td>&pound;330,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>9, Linkside Court, Richard Road, L23 8TF</td>
-          <td>2025-03-27</td>
-          <td>&pound;201,300</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>8 Haddington Road, L23 9AF</td>
-          <td>2025-01-13</td>
-          <td>&pound;425,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>55 Rimrose Valley Road, L23 9TF</td>
-          <td>2025-03-19</td>
-          <td>&pound;220,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>35 Forefield Lane, L23 9TG</td>
-          <td>2025-03-31</td>
-          <td>&pound;350,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>16 Forefield Lane, L23 9TH</td>
-          <td>2025-03-28</td>
-          <td>&pound;362,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>56 Moorfield Road, L23 9UD</td>
-          <td>2025-03-27</td>
-          <td>&pound;285,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>13 Fern Hey, L23 9UL</td>
-          <td>2025-04-15</td>
-          <td>&pound;190,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>15 Millcroft, L23 9XJ</td>
-          <td>2025-02-20</td>
-          <td>&pound;332,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>9 Ronaldsway, L23 9XU</td>
-          <td>2025-03-28</td>
-          <td>&pound;352,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>63 Thornfield Road, L23 9XY</td>
-          <td>2025-03-21</td>
-          <td>&pound;345,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">32 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">31 Myers Road East, L23 0QU</li>
+        <li data-index="1">2, Myers Lodge, Myers Road East, L23 0QX</li>
+        <li data-index="2">46 College Road, L23 0RP</li>
+        <li data-index="3">2 Caithness Drive, L23 0RQ</li>
+        <li data-index="4">30 Marldon Avenue, L23 0SL</li>
+        <li data-index="5">21 Nazeby Avenue, L23 0SN</li>
+        <li data-index="6">15 Seafield Avenue, L23 0TG</li>
+        <li data-index="7">34 Wylva Avenue, L23 0TH</li>
+        <li data-index="8">10 The Precincts, L23 0TP</li>
+        <li data-index="9">45C Moorgate Avenue, L23 0UE</li>
+        <li data-index="10">2 Musker Gardens, L23 0UT</li>
+        <li data-index="11">34 Lydiate Park, L23 1XL</li>
+        <li data-index="12">27 Orchard Dale, L23 2RJ</li>
+        <li data-index="13">37 Trevor Drive, L23 2RN</li>
+        <li data-index="14">22 Old Farm Road, L23 2RZ</li>
+        <li data-index="15">47 Oaklands Avenue, L23 2TN</li>
+        <li data-index="16">21 Rossett Road, L23 3AN</li>
+        <li data-index="17">16 Harrington Road, L23 5ST</li>
+        <li data-index="18">62 Queens Road, L23 5TR</li>
+        <li data-index="19">10, Elsinore Court, Abbotsford Road, L23 6WE</li>
+        <li data-index="20">11 St Andrews Drive, L23 7UX</li>
+        <li data-index="21">5 Boundary Drive, L23 7UY</li>
+        <li data-index="22">9, Linkside Court, Richard Road, L23 8TF</li>
+        <li data-index="23">8 Haddington Road, L23 9AF</li>
+        <li data-index="24">55 Rimrose Valley Road, L23 9TF</li>
+        <li data-index="25">35 Forefield Lane, L23 9TG</li>
+        <li data-index="26">16 Forefield Lane, L23 9TH</li>
+        <li data-index="27">56 Moorfield Road, L23 9UD</li>
+        <li data-index="28">13 Fern Hey, L23 9UL</li>
+        <li data-index="29">15 Millcroft, L23 9XJ</li>
+        <li data-index="30">9 Ronaldsway, L23 9XU</li>
+        <li data-index="31">63 Thornfield Road, L23 9XY</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -269,16 +75,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

@@ -79,17 +79,9 @@ def generate_report_html(
         ]
     )
 
-    rows_html = ""
-    for s in sections:
-        price_str = f"&pound;{int(s['price']):,}" if s["price"] else "N/A"
-        rows_html += f"""        <tr>
-          <td>{s['address']}</td>
-          <td>{s['date']}</td>
-          <td>{price_str}</td>
-          <td>{s['type']}</td>
-          <td>{s['postcode_area']}</td>
-        </tr>
-"""
+    list_html = ""
+    for i, s in enumerate(sections):
+        list_html += f'        <li data-index="{i}">{s["address"]}</li>\n'
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -100,18 +92,19 @@ def generate_report_html(
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+    html, body {{ height: 100%; overflow: hidden; }}
     body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }}
     header {{ background: #2c3e50; color: white; padding: 1.5rem 2rem; }}
     header h1 {{ font-size: 1.5rem; font-weight: 600; }}
     header a {{ color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }}
     header a:hover {{ text-decoration: underline; }}
-    #map {{ height: 500px; width: 100%; }}
-    .container {{ max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }}
-    table {{ width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }}
-    th, td {{ padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }}
-    th {{ background: #34495e; color: white; font-weight: 500; }}
-    tr:hover {{ background: #f9f9f9; }}
-    .summary {{ margin: 1rem 0; color: #666; font-size: 0.9rem; }}
+    .content {{ display: flex; height: calc(100vh - 80px); }}
+    .sidebar {{ width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }}
+    .sidebar .summary {{ padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }}
+    .sidebar ul {{ list-style: none; }}
+    .sidebar li {{ padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }}
+    .sidebar li:hover {{ background: #f9f9f9; }}
+    #map {{ flex: 1; }}
   </style>
 </head>
 <body>
@@ -119,16 +112,13 @@ def generate_report_html(
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; {report_date}</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">{len(sections)} new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-{rows_html}      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">{len(sections)} new sale(s) detected.</p>
+      <ul>
+{list_html}      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -138,16 +128,37 @@ def generate_report_html(
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }}).addTo(map);
+    var defaultIcon = L.icon({{
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    }});
+    var redIcon = L.icon({{
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    }});
     var bounds = [];
-    sales.forEach(function(s) {{
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {{}};
+    sales.forEach(function(s, i) {{
+      var marker = L.marker([s.lat, s.lng], {{icon: defaultIcon}}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     }});
     if (bounds.length > 0) {{
       map.fitBounds(bounds, {{ padding: [40, 40] }});
     }}
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {{
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {{
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      }});
+      li.addEventListener('mouseleave', function() {{
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      }});
+    }})
   </script>
 </body>
 </html>

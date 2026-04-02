@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,240 +27,45 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2026-01-01</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">32 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>42 Lyra Road, L22 0NT</td>
-          <td>2025-11-11</td>
-          <td>&pound;278,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 3, 9 Cambridge Road, L22 1RR</td>
-          <td>2025-10-14</td>
-          <td>&pound;150,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>11 Alder Grove, L22 2AL</td>
-          <td>2025-10-31</td>
-          <td>&pound;212,500</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>23 Shrewsbury Avenue, L22 2AS</td>
-          <td>2025-10-31</td>
-          <td>&pound;220,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>6 Worcester Avenue, L22 2BB</td>
-          <td>2025-07-23</td>
-          <td>&pound;206,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>61 Brooke Road West, L22 2BE</td>
-          <td>2025-10-20</td>
-          <td>&pound;318,500</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 4, Angra Bank, Bramhall Road, L22 3XA</td>
-          <td>2025-09-30</td>
-          <td>&pound;175,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>72 Molyneux Road, L22 4QZ</td>
-          <td>2025-10-24</td>
-          <td>&pound;225,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>47 Royton Road, L22 4RB</td>
-          <td>2025-11-19</td>
-          <td>&pound;222,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 1, 50A Kingsway, L22 4RQ</td>
-          <td>2025-10-20</td>
-          <td>&pound;178,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>18 Mount Pleasant, L22 5PW</td>
-          <td>2025-10-30</td>
-          <td>&pound;107,950</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>27 Endsleigh Road, L22 6QG</td>
-          <td>2025-11-11</td>
-          <td>&pound;200,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>170 Liverpool Road, L23 0QW</td>
-          <td>2025-10-20</td>
-          <td>&pound;578,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>54 Myers Road East, L23 0QZ</td>
-          <td>2025-11-07</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>6 Buttermere Gardens, L23 0SF</td>
-          <td>2025-11-06</td>
-          <td>&pound;221,000</td>
-          <td>Terraced</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>73 Moor Lane, L23 2SG</td>
-          <td>2025-11-06</td>
-          <td>&pound;480,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>35 Moorland Avenue, L23 2SN</td>
-          <td>2025-11-21</td>
-          <td>&pound;280,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>18 Brentwood Avenue, L23 2UZ</td>
-          <td>2025-11-14</td>
-          <td>&pound;350,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>25 Rossett Road, L23 3AN</td>
-          <td>2025-10-14</td>
-          <td>&pound;379,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>56 Kingswood Drive, L23 3DF</td>
-          <td>2025-10-28</td>
-          <td>&pound;350,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>46 Vale Road, L23 5RZ</td>
-          <td>2025-11-18</td>
-          <td>&pound;387,500</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>46 St Lukes Road, L23 5SZ</td>
-          <td>2025-10-21</td>
-          <td>&pound;355,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 7, Nicholas Court, 8, Nicholas Road, L23 6TS</td>
-          <td>2025-10-31</td>
-          <td>&pound;200,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>12 Alexandra Road, L23 7TF</td>
-          <td>2025-10-31</td>
-          <td>&pound;195,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>1 St Andrews Road, L23 7UP</td>
-          <td>2025-10-09</td>
-          <td>&pound;714,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>49 Ince Avenue, L23 7XE</td>
-          <td>2025-10-31</td>
-          <td>&pound;395,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>6 Burbo Bank Road North, L23 8TA</td>
-          <td>2025-07-10</td>
-          <td>&pound;1,075,000</td>
-          <td>Detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>Flat 5, Amesbury, 41, Blundellsands Road East, L23 8UJ</td>
-          <td>2025-11-06</td>
-          <td>&pound;108,500</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>30 Cranfield Road, L23 9TZ</td>
-          <td>2025-10-24</td>
-          <td>&pound;340,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>68 Edgemoor Drive, L23 9UQ</td>
-          <td>2025-11-14</td>
-          <td>&pound;348,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>59 Amaury Road, L23 9UY</td>
-          <td>2025-11-05</td>
-          <td>&pound;78,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L23</td>
-        </tr>
-        <tr>
-          <td>66 Thornfield Road, L23 9XZ</td>
-          <td>2025-10-24</td>
-          <td>&pound;275,000</td>
-          <td>Semi-detached</td>
-          <td>L23</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">32 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">42 Lyra Road, L22 0NT</li>
+        <li data-index="1">Flat 3, 9 Cambridge Road, L22 1RR</li>
+        <li data-index="2">11 Alder Grove, L22 2AL</li>
+        <li data-index="3">23 Shrewsbury Avenue, L22 2AS</li>
+        <li data-index="4">6 Worcester Avenue, L22 2BB</li>
+        <li data-index="5">61 Brooke Road West, L22 2BE</li>
+        <li data-index="6">Flat 4, Angra Bank, Bramhall Road, L22 3XA</li>
+        <li data-index="7">72 Molyneux Road, L22 4QZ</li>
+        <li data-index="8">47 Royton Road, L22 4RB</li>
+        <li data-index="9">Flat 1, 50A Kingsway, L22 4RQ</li>
+        <li data-index="10">18 Mount Pleasant, L22 5PW</li>
+        <li data-index="11">27 Endsleigh Road, L22 6QG</li>
+        <li data-index="12">170 Liverpool Road, L23 0QW</li>
+        <li data-index="13">54 Myers Road East, L23 0QZ</li>
+        <li data-index="14">6 Buttermere Gardens, L23 0SF</li>
+        <li data-index="15">73 Moor Lane, L23 2SG</li>
+        <li data-index="16">35 Moorland Avenue, L23 2SN</li>
+        <li data-index="17">18 Brentwood Avenue, L23 2UZ</li>
+        <li data-index="18">25 Rossett Road, L23 3AN</li>
+        <li data-index="19">56 Kingswood Drive, L23 3DF</li>
+        <li data-index="20">46 Vale Road, L23 5RZ</li>
+        <li data-index="21">46 St Lukes Road, L23 5SZ</li>
+        <li data-index="22">Flat 7, Nicholas Court, 8, Nicholas Road, L23 6TS</li>
+        <li data-index="23">12 Alexandra Road, L23 7TF</li>
+        <li data-index="24">1 St Andrews Road, L23 7UP</li>
+        <li data-index="25">49 Ince Avenue, L23 7XE</li>
+        <li data-index="26">6 Burbo Bank Road North, L23 8TA</li>
+        <li data-index="27">Flat 5, Amesbury, 41, Blundellsands Road East, L23 8UJ</li>
+        <li data-index="28">30 Cranfield Road, L23 9TZ</li>
+        <li data-index="29">68 Edgemoor Drive, L23 9UQ</li>
+        <li data-index="30">59 Amaury Road, L23 9UY</li>
+        <li data-index="31">66 Thornfield Road, L23 9XZ</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -269,16 +75,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>

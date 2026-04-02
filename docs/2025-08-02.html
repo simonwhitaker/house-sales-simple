@@ -7,18 +7,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
     header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 600; }
     header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
     header a:hover { text-decoration: underline; }
-    #map { height: 500px; width: 100%; }
-    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
-    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-    th { background: #34495e; color: white; font-weight: 500; }
-    tr:hover { background: #f9f9f9; }
-    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+    .content { display: flex; height: calc(100vh - 80px); }
+    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
+    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    .sidebar ul { list-style: none; }
+    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
+    .sidebar li:hover { background: #f9f9f9; }
+    #map { flex: 1; }
   </style>
 </head>
 <body>
@@ -26,373 +27,64 @@
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; 2025-08-02</h1>
   </header>
-  <div id="map"></div>
-  <div class="container">
-    <p class="summary">51 new sale(s) detected.</p>
-    <table>
-      <thead>
-        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>53 Corona Road, L22 0LN</td>
-          <td>2025-03-28</td>
-          <td>&pound;240,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>7 Argo Road, L22 0NN</td>
-          <td>2025-02-27</td>
-          <td>&pound;215,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>13 Argo Road, L22 0NN</td>
-          <td>2025-02-14</td>
-          <td>&pound;220,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>20 Willoughby Road, L22 0NP</td>
-          <td>2025-04-14</td>
-          <td>&pound;230,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>28 Norma Road, L22 0NS</td>
-          <td>2025-02-14</td>
-          <td>&pound;225,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>29 Norma Road, L22 0NS</td>
-          <td>2025-03-31</td>
-          <td>&pound;246,500</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>31 Lyra Road, L22 0NT</td>
-          <td>2025-02-14</td>
-          <td>&pound;252,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 3, 51 Handfield Road, L22 0NU</td>
-          <td>2025-03-31</td>
-          <td>&pound;93,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>30 Argo Road, L22 0NW</td>
-          <td>2025-02-06</td>
-          <td>&pound;178,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 6, Marina House, 13, Cambridge Road, L22 1RR</td>
-          <td>2025-02-21</td>
-          <td>&pound;100,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>7 Sandringham Road, L22 1RW</td>
-          <td>2025-03-27</td>
-          <td>&pound;285,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>14 Sandringham Road, L22 1RW</td>
-          <td>2025-03-14</td>
-          <td>&pound;265,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>20 Laurel Grove, L22 2AF</td>
-          <td>2025-03-19</td>
-          <td>&pound;290,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>1 Brooke Road East, L22 2AN</td>
-          <td>2025-02-03</td>
-          <td>&pound;320,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>11A Brooke Road East, L22 2AN</td>
-          <td>2025-02-21</td>
-          <td>&pound;382,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>1 Pine Grove, L22 2AQ</td>
-          <td>2025-02-06</td>
-          <td>&pound;245,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>3 Pine Grove, L22 2AQ</td>
-          <td>2025-03-27</td>
-          <td>&pound;305,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>5 Lichfield Avenue, L22 2AU</td>
-          <td>2025-05-01</td>
-          <td>&pound;210,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>26 Brooke Road East, L22 2AW</td>
-          <td>2025-06-20</td>
-          <td>&pound;285,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>13 Leicester Avenue, L22 2BA</td>
-          <td>2025-02-03</td>
-          <td>&pound;285,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>51A Brooke Road West, L22 2BE</td>
-          <td>2025-03-12</td>
-          <td>&pound;325,000</td>
-          <td>Detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 8, Angra Bank, Bramhall Road, L22 3XA</td>
-          <td>2025-02-14</td>
-          <td>&pound;145,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 3, 1 Bramhall Road, L22 3XA</td>
-          <td>2025-02-14</td>
-          <td>&pound;130,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Apartment 1, 65 Park Road, L22 3XG</td>
-          <td>2025-03-06</td>
-          <td>&pound;110,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>46 Brooklands Avenue, L22 3XZ</td>
-          <td>2025-04-17</td>
-          <td>&pound;226,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>6 Ronald Close, L22 3YH</td>
-          <td>2025-02-21</td>
-          <td>&pound;266,500</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>28 Crosby Road North, L22 4QF</td>
-          <td>2025-03-14</td>
-          <td>&pound;275,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>68 Stuart Road, L22 4QT</td>
-          <td>2025-03-19</td>
-          <td>&pound;160,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>55 Molyneux Road, L22 4QY</td>
-          <td>2025-03-27</td>
-          <td>&pound;228,700</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>87 Milton Road, L22 4RE</td>
-          <td>2025-06-02</td>
-          <td>&pound;216,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>51 Kingsway, L22 4RG</td>
-          <td>2025-04-30</td>
-          <td>&pound;340,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>24 Kingswood Avenue, L22 4RL</td>
-          <td>2025-06-10</td>
-          <td>&pound;187,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>15A Church Road, L22 5NA</td>
-          <td>2025-03-03</td>
-          <td>&pound;220,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 1, 20 Walmer Road, L22 5NL</td>
-          <td>2025-05-29</td>
-          <td>&pound;100,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>3 Endsleigh Road, L22 6QG</td>
-          <td>2025-04-02</td>
-          <td>&pound;195,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>37 Endsleigh Road, L22 6QG</td>
-          <td>2025-03-03</td>
-          <td>&pound;160,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>12 Warrenhouse Road, L22 6QN</td>
-          <td>2025-05-30</td>
-          <td>&pound;235,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>34 Leopold Road, L22 6QZ</td>
-          <td>2025-04-23</td>
-          <td>&pound;325,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>27 Heathfield Road, L22 6RE</td>
-          <td>2025-05-13</td>
-          <td>&pound;316,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>21 Courtenay Avenue, L22 7RG</td>
-          <td>2025-03-03</td>
-          <td>&pound;315,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>5 Blucher Street, L22 8QB</td>
-          <td>2025-02-14</td>
-          <td>&pound;260,000</td>
-          <td>Semi-detached</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 5, 10 Adelaide Terrace, L22 8QD</td>
-          <td>2025-02-07</td>
-          <td>&pound;122,500</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>1A Oxford Road, L22 8QE</td>
-          <td>2025-05-29</td>
-          <td>&pound;255,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>13 Oxford Road, L22 8QE</td>
-          <td>2025-02-14</td>
-          <td>&pound;255,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>18 Picton Road, L22 8QH</td>
-          <td>2025-05-30</td>
-          <td>&pound;280,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>Flat 4, Lowood Court, 42, East Street, L22 8QR</td>
-          <td>2025-02-17</td>
-          <td>&pound;151,000</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>95 Lawton Road, L22 9QL</td>
-          <td>2025-02-04</td>
-          <td>&pound;275,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>80A St Johns Road, L22 9QQ</td>
-          <td>2025-05-30</td>
-          <td>&pound;140,440</td>
-          <td>Flat/Maisonette</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>52 Thorndale Road, L22 9QR</td>
-          <td>2025-02-28</td>
-          <td>&pound;190,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>18 Oakdale Road, L22 9QS</td>
-          <td>2025-02-17</td>
-          <td>&pound;282,000</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-        <tr>
-          <td>44 Somerville Road, L22 9QZ</td>
-          <td>2025-06-20</td>
-          <td>&pound;222,500</td>
-          <td>Terraced</td>
-          <td>L22</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="content">
+    <div class="sidebar">
+      <p class="summary">51 new sale(s) detected.</p>
+      <ul>
+        <li data-index="0">53 Corona Road, L22 0LN</li>
+        <li data-index="1">7 Argo Road, L22 0NN</li>
+        <li data-index="2">13 Argo Road, L22 0NN</li>
+        <li data-index="3">20 Willoughby Road, L22 0NP</li>
+        <li data-index="4">28 Norma Road, L22 0NS</li>
+        <li data-index="5">29 Norma Road, L22 0NS</li>
+        <li data-index="6">31 Lyra Road, L22 0NT</li>
+        <li data-index="7">Flat 3, 51 Handfield Road, L22 0NU</li>
+        <li data-index="8">30 Argo Road, L22 0NW</li>
+        <li data-index="9">Flat 6, Marina House, 13, Cambridge Road, L22 1RR</li>
+        <li data-index="10">7 Sandringham Road, L22 1RW</li>
+        <li data-index="11">14 Sandringham Road, L22 1RW</li>
+        <li data-index="12">20 Laurel Grove, L22 2AF</li>
+        <li data-index="13">1 Brooke Road East, L22 2AN</li>
+        <li data-index="14">11A Brooke Road East, L22 2AN</li>
+        <li data-index="15">1 Pine Grove, L22 2AQ</li>
+        <li data-index="16">3 Pine Grove, L22 2AQ</li>
+        <li data-index="17">5 Lichfield Avenue, L22 2AU</li>
+        <li data-index="18">26 Brooke Road East, L22 2AW</li>
+        <li data-index="19">13 Leicester Avenue, L22 2BA</li>
+        <li data-index="20">51A Brooke Road West, L22 2BE</li>
+        <li data-index="21">Flat 8, Angra Bank, Bramhall Road, L22 3XA</li>
+        <li data-index="22">Flat 3, 1 Bramhall Road, L22 3XA</li>
+        <li data-index="23">Apartment 1, 65 Park Road, L22 3XG</li>
+        <li data-index="24">46 Brooklands Avenue, L22 3XZ</li>
+        <li data-index="25">6 Ronald Close, L22 3YH</li>
+        <li data-index="26">28 Crosby Road North, L22 4QF</li>
+        <li data-index="27">68 Stuart Road, L22 4QT</li>
+        <li data-index="28">55 Molyneux Road, L22 4QY</li>
+        <li data-index="29">87 Milton Road, L22 4RE</li>
+        <li data-index="30">51 Kingsway, L22 4RG</li>
+        <li data-index="31">24 Kingswood Avenue, L22 4RL</li>
+        <li data-index="32">15A Church Road, L22 5NA</li>
+        <li data-index="33">Flat 1, 20 Walmer Road, L22 5NL</li>
+        <li data-index="34">3 Endsleigh Road, L22 6QG</li>
+        <li data-index="35">37 Endsleigh Road, L22 6QG</li>
+        <li data-index="36">12 Warrenhouse Road, L22 6QN</li>
+        <li data-index="37">34 Leopold Road, L22 6QZ</li>
+        <li data-index="38">27 Heathfield Road, L22 6RE</li>
+        <li data-index="39">21 Courtenay Avenue, L22 7RG</li>
+        <li data-index="40">5 Blucher Street, L22 8QB</li>
+        <li data-index="41">Flat 5, 10 Adelaide Terrace, L22 8QD</li>
+        <li data-index="42">1A Oxford Road, L22 8QE</li>
+        <li data-index="43">13 Oxford Road, L22 8QE</li>
+        <li data-index="44">18 Picton Road, L22 8QH</li>
+        <li data-index="45">Flat 4, Lowood Court, 42, East Street, L22 8QR</li>
+        <li data-index="46">95 Lawton Road, L22 9QL</li>
+        <li data-index="47">80A St Johns Road, L22 9QQ</li>
+        <li data-index="48">52 Thorndale Road, L22 9QR</li>
+        <li data-index="49">18 Oakdale Road, L22 9QS</li>
+        <li data-index="50">44 Somerville Road, L22 9QZ</li>
+      </ul>
+    </div>
+    <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -402,16 +94,37 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
     var bounds = [];
-    sales.forEach(function(s) {
-      var marker = L.marker([s.lat, s.lng]).addTo(map);
+    var markers = {};
+    sales.forEach(function(s, i) {
+      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
       var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
       marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
       bounds.push([s.lat, s.lng]);
+      markers[i] = marker;
     });
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
+    document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
+      var idx = Number(li.getAttribute('data-index'));
+      li.addEventListener('mouseenter', function() {
+        if (markers[idx]) markers[idx].setIcon(redIcon);
+      });
+      li.addEventListener('mouseleave', function() {
+        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+      });
+    })
   </script>
 </body>
 </html>
