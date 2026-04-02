@@ -29,9 +29,8 @@ jobs:
       - name: Get latest data
         run: uv run python main.py
 
-      - name: Delete old reports
+      - name: Delete old markdown reports (keep last 6)
         run: |
-          latest_report="$(ls -1 reports/*.md | sort | tail -n 1)"
-          find reports -maxdepth 1 -type f -name "*.md" ! -path "$latest_report" -delete
+          ls -1 reports/*.md 2>/dev/null | sort | head -n -6 | xargs -r rm
 
       - uses: EndBug/add-and-commit@v9

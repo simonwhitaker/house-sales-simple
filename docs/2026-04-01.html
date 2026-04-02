@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Sales Report &mdash; 2026-04-01</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; }
+    header h1 { font-size: 1.5rem; font-weight: 600; }
+    header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
+    header a:hover { text-decoration: underline; }
+    #map { height: 500px; width: 100%; }
+    .container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
+    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    th { background: #34495e; color: white; font-weight: 500; }
+    tr:hover { background: #f9f9f9; }
+    .summary { margin: 1rem 0; color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; All reports</a>
+    <h1>House Sales Report &mdash; 2026-04-01</h1>
+  </header>
+  <div id="map"></div>
+  <div class="container">
+    <p class="summary">41 new sale(s) detected.</p>
+    <table>
+      <thead>
+        <tr><th>Address</th><th>Sale Date</th><th>Price</th><th>Type</th><th>Area</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>24 Hougoumont Avenue, L22 0LL</td>
+          <td>2026-01-19</td>
+          <td>&pound;330,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>3 Brooke Road East, L22 2AN</td>
+          <td>2026-01-19</td>
+          <td>&pound;240,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>20 Somerville Grove, L22 2AR</td>
+          <td>2026-01-09</td>
+          <td>&pound;250,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>1 Pinehurst Avenue, L22 2AY</td>
+          <td>2026-01-30</td>
+          <td>&pound;270,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>25 Worcester Avenue, L22 2BB</td>
+          <td>2025-10-03</td>
+          <td>&pound;200,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>37 Ronald Road, L22 3XU</td>
+          <td>2026-01-29</td>
+          <td>&pound;120,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>22 Sycamore Road, L22 4QJ</td>
+          <td>2026-01-05</td>
+          <td>&pound;242,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>21 Ashlar Road, L22 4QP</td>
+          <td>2026-01-30</td>
+          <td>&pound;250,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>48 Stuart Road, L22 4QT</td>
+          <td>2026-01-23</td>
+          <td>&pound;174,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>2 Galloway Road, L22 4QX</td>
+          <td>2025-11-27</td>
+          <td>&pound;120,500</td>
+          <td>Other</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>66 Molyneux Road, L22 4QZ</td>
+          <td>2026-01-12</td>
+          <td>&pound;275,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>6, South View Court, South View, L22 5BD</td>
+          <td>2025-12-19</td>
+          <td>&pound;160,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>22 Mount Street, L22 5NN</td>
+          <td>2026-02-06</td>
+          <td>&pound;205,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>7 Endsleigh Road, L22 6QG</td>
+          <td>2026-01-22</td>
+          <td>&pound;190,000</td>
+          <td>Semi-detached</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>26 Albert Road, L22 8QT</td>
+          <td>2026-02-05</td>
+          <td>&pound;260,000</td>
+          <td>Terraced</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>103 St Johns Road, L22 9QD</td>
+          <td>2025-10-06</td>
+          <td>&pound;200,000</td>
+          <td>Other</td>
+          <td>L22</td>
+        </tr>
+        <tr>
+          <td>23 Rothesay Drive, L23 0RE</td>
+          <td>2026-01-22</td>
+          <td>&pound;330,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>55 College Road, L23 0RL</td>
+          <td>2026-02-03</td>
+          <td>&pound;330,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>5 Rydal Avenue, L23 0TB</td>
+          <td>2026-01-29</td>
+          <td>&pound;250,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>58 Rosedale Avenue, L23 0UQ</td>
+          <td>2026-01-30</td>
+          <td>&pound;255,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>25 Thorn Tree Drive, L23 1AE</td>
+          <td>2025-11-21</td>
+          <td>&pound;200,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>51 Westbourne Avenue, L23 1UP</td>
+          <td>2026-02-16</td>
+          <td>&pound;185,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 10, Grove Court, 20, Moor Lane, L23 2AA</td>
+          <td>2026-01-16</td>
+          <td>&pound;178,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>166 Moor Lane, L23 2UQ</td>
+          <td>2025-12-05</td>
+          <td>&pound;382,200</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>46 Moor Lane, L23 4TW</td>
+          <td>2026-01-16</td>
+          <td>&pound;300,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Apartment 2, Church View, 75, Liverpool Road, L23 5SE</td>
+          <td>2025-12-17</td>
+          <td>&pound;140,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>16 Liverpool Road, L23 5SF</td>
+          <td>2025-12-19</td>
+          <td>&pound;170,000</td>
+          <td>Other</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>6 St Lukes Road, L23 5SZ</td>
+          <td>2026-01-16</td>
+          <td>&pound;210,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>55 Kimberley Drive, L23 5TA</td>
+          <td>2025-12-12</td>
+          <td>&pound;415,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>23 Everest Road, L23 5TN</td>
+          <td>2026-01-16</td>
+          <td>&pound;375,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>22 York Road, L23 5TS</td>
+          <td>2026-01-23</td>
+          <td>&pound;205,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Apartment 9, Blundellsands Classic, 19, Blundellsands Road West, L23 6BA</td>
+          <td>2026-01-05</td>
+          <td>&pound;285,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 18, Rutland House, Nicholas Road, L23 6TT</td>
+          <td>2026-02-13</td>
+          <td>&pound;187,500</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>5 Merton Grove, L23 6UY</td>
+          <td>2026-01-30</td>
+          <td>&pound;274,500</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 12, The Downs, Blundellsands Road West, L23 6XS</td>
+          <td>2026-02-13</td>
+          <td>&pound;235,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>12, Lismore Court, Blundellsands Road East, L23 8SF</td>
+          <td>2026-01-15</td>
+          <td>&pound;180,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>41 St Anthonys Road, L23 8TW</td>
+          <td>2026-01-22</td>
+          <td>&pound;500,000</td>
+          <td>Detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>Flat 11, Homedove House, Blundellsands Road East, L23 8XB</td>
+          <td>2026-01-30</td>
+          <td>&pound;80,000</td>
+          <td>Flat/Maisonette</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>27 Amaury Road, L23 9UY</td>
+          <td>2025-10-24</td>
+          <td>&pound;130,000</td>
+          <td>Terraced</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>19 Ronaldsway, L23 9XU</td>
+          <td>2026-02-05</td>
+          <td>&pound;141,424</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+        <tr>
+          <td>20 Ronaldsway, L23 9XX</td>
+          <td>2026-02-12</td>
+          <td>&pound;305,000</td>
+          <td>Semi-detached</td>
+          <td>L23</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var sales = [];
+    var map = L.map('map').setView([53.48, -3.04], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19
+    }).addTo(map);
+    var bounds = [];
+    sales.forEach(function(s) {
+      var marker = L.marker([s.lat, s.lng]).addTo(map);
+      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
+      marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
+      bounds.push([s.lat, s.lng]);
+    });
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  </script>
+</body>
+</html>
