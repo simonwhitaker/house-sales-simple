@@ -201,6 +201,7 @@ def generate_index_html(docs_dir: Path) -> None:
 CSV_DOWNLOAD_URL_FORMAT = "https://landregistry.data.gov.uk/app/ppd/ppd_data.csv?header=true&limit=all&min_date={min_date}&postcode={postcode_area}"
 
 DATA_DIR_ROOT = Path(__file__).parent / "data"
+REPORT_DIR = Path(__file__).parent / "reports"
 DOCS_DIR = Path(__file__).parent / "docs"
 
 
@@ -256,6 +257,18 @@ def main():
         lat_lng = coords.get(sale["postcode"])
         sale["lat"] = lat_lng[0] if lat_lng else None
         sale["lng"] = lat_lng[1] if lat_lng else None
+
+    # Generate markdown report
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    md_path = REPORT_DIR / f"{today.isoformat()}.md"
+    with md_path.open("w") as f:
+        for postcode_area in ["L22", "L23"]:
+            area_sales = [s for s in all_new_sales if s["postcode_area"] == postcode_area]
+            f.write(f"# Sales in {postcode_area}\n\n")
+            for s in area_sales:
+                f.write(f"* {s['address']}\n")
+            f.write("\n")
+    print(f"Markdown report written to {md_path}")
 
     # Generate HTML report
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
