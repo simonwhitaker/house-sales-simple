@@ -12,3 +12,7 @@ dependencies = [
 dev = [
     "ruff>=0.12.7",
 ]
+
+[tool.uv]
+# https://news.ycombinator.com/item?id=47582632
+exclude-newer = "7 days"
