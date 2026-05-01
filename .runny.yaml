@@ -1,0 +1,3 @@
+commands:
+  update-deps:
+    run: uv lock --upgrade
