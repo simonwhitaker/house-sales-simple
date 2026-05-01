@@ -94,10 +94,11 @@ def generate_report_html(
     * {{ margin: 0; padding: 0; box-sizing: border-box; }}
     html, body {{ height: 100%; overflow: hidden; }}
     body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; display: flex; flex-direction: column; }}
-    header {{ background: #2c3e50; color: white; padding: 1.5rem 2rem; flex-shrink: 0; }}
+    header {{ background: #2c3e50; color: white; padding: 1.5rem 2rem; flex-shrink: 0; position: relative; }}
     header h1 {{ font-size: 1.5rem; font-weight: 600; }}
     header a {{ color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }}
     header a:hover {{ text-decoration: underline; }}
+    header .repo-link {{ position: absolute; top: 1.5rem; right: 2rem; }}
     .content {{ display: flex; flex: 1; min-height: 0; }}
     .sidebar {{ width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }}
     .sidebar .summary {{ padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }}
@@ -111,6 +112,7 @@ def generate_report_html(
   <header>
     <a href="index.html">&larr; All reports</a>
     <h1>House Sales Report &mdash; {report_date}</h1>
+    <a class="repo-link" href="https://github.com/simonwhitaker/house-sales-simple">View on GitHub</a>
   </header>
   <div class="content">
     <div class="sidebar">
@@ -184,19 +186,22 @@ def generate_index_html(docs_dir: Path) -> None:
   <style>
     * {{ margin: 0; padding: 0; box-sizing: border-box; }}
     body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }}
-    header {{ background: #2c3e50; color: white; padding: 1.5rem 2rem; }}
+    header {{ background: #2c3e50; color: white; padding: 1.5rem 2rem; position: relative; }}
     header h1 {{ font-size: 1.5rem; font-weight: 600; }}
+    header .repo-link {{ position: absolute; top: 1.5rem; right: 2rem; color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }}
+    header .repo-link:hover {{ text-decoration: underline; }}
     .container {{ max-width: 800px; margin: 1.5rem auto; padding: 0 1rem; }}
     ul {{ list-style: none; }}
     li {{ margin: 0.5rem 0; }}
-    a {{ color: #2980b9; text-decoration: none; font-size: 1.1rem; }}
-    a:hover {{ text-decoration: underline; }}
+    .container a {{ color: #2980b9; text-decoration: none; font-size: 1.1rem; }}
+    .container a:hover {{ text-decoration: underline; }}
     .empty {{ color: #999; font-style: italic; }}
   </style>
 </head>
 <body>
   <header>
     <h1>House Sales Reports</h1>
+    <a class="repo-link" href="https://github.com/simonwhitaker/house-sales-simple">View on GitHub</a>
   </header>
   <div class="container">
     <ul>
