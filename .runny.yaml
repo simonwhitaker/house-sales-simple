@@ -1,3 +1,5 @@
 commands:
   update-deps:
     run: uv lock --upgrade
+  regenerate-all:
+    run: uv run python generate_from_existing.py
