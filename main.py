@@ -1,7 +1,9 @@
 import json
 from csv import DictReader
 from datetime import date, timedelta
+from io import StringIO
 from pathlib import Path
+from time import sleep
 
 import requests
 
@@ -32,6 +34,61 @@ PROPERTY_TYPE_LABELS = {
     "F": "Flat/Maisonette",
     "O": "Other",
 }
+
+
+REQUIRED_CSV_FIELDS = {
+    "unique_id",
+    "price_paid",
+    "deed_date",
+    "postcode",
+    "property_type",
+    "saon",
+    "paon",
+    "street",
+}
+DOWNLOAD_ATTEMPTS = 3
+DOWNLOAD_TIMEOUT_SECONDS = 30
+RETRY_DELAY_SECONDS = 2
+
+
+def preview_response(text: str) -> str:
+    preview = text[:500].replace("\r", "\\r").replace("\n", "\\n")
+    return preview if preview else "<empty response>"
+
+
+def validate_sales_csv(csv_text: str, url: str) -> None:
+    reader = DictReader(StringIO(csv_text))
+    fieldnames = set(reader.fieldnames or [])
+    missing_fields = REQUIRED_CSV_FIELDS - fieldnames
+    if not missing_fields:
+        return
+
+    missing = ", ".join(sorted(missing_fields))
+    raise ValueError(
+        f"Downloaded CSV from {url} is missing required column(s): {missing}. "
+        f"Header: {reader.fieldnames!r}. Response preview: {preview_response(csv_text)!r}"
+    )
+
+
+def download_sales_csv(url: str) -> str:
+    last_error = None
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            resp = requests.get(url, timeout=DOWNLOAD_TIMEOUT_SECONDS)
+            resp.raise_for_status()
+            validate_sales_csv(resp.text, url)
+            return resp.text
+        except (requests.RequestException, ValueError) as exc:
+            last_error = exc
+            if attempt == DOWNLOAD_ATTEMPTS:
+                break
+            print(f"Warning: attempt {attempt} to download sales CSV failed: {exc}")
+            sleep(RETRY_DELAY_SECONDS)
+
+    raise RuntimeError(
+        f"Failed to download valid sales CSV after {DOWNLOAD_ATTEMPTS} attempts: "
+        f"{last_error}"
+    ) from last_error
 
 
 def geocode_postcodes(postcodes: list[str]) -> dict[str, tuple[float, float]]:
@@ -242,9 +299,9 @@ def main():
         url = CSV_DOWNLOAD_URL_FORMAT.format(
             min_date=min_date, postcode_area=postcode_area
         )
-        resp = requests.get(url)
+        csv_text = download_sales_csv(url)
         with current_data_path.open("w") as f:
-            f.write(resp.text)
+            f.write(csv_text)
 
         # Read in the latest data, collect new sales
         current_data = DictReader(current_data_path.open())
@@ -279,7 +336,9 @@ def main():
     md_path = REPORT_DIR / f"{today.isoformat()}.md"
     with md_path.open("w") as f:
         for postcode_area in ["L22", "L23"]:
-            area_sales = [s for s in all_new_sales if s["postcode_area"] == postcode_area]
+            area_sales = [
+                s for s in all_new_sales if s["postcode_area"] == postcode_area
+            ]
             f.write(f"# Sales in {postcode_area}\n\n")
             for s in area_sales:
                 f.write(f"* {s['address']}\n")
