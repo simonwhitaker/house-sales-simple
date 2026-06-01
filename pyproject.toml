@@ -13,6 +13,10 @@ dev = [
     "ruff>=0.12.7",
 ]
 
+[tool.ruff.lint]
+# Enable Ruff's isort-compatible import ordering checks.
+extend-select = ["I"]
+
 [tool.uv]
 # https://news.ycombinator.com/item?id=47582632
 exclude-newer = "7 days"

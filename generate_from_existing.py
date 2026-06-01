@@ -7,16 +7,15 @@ geocodes the postcodes, and writes HTML reports to docs/.
 """
 
 from csv import DictReader
-from pathlib import Path
 
 from main import (
+    DATA_DIR_ROOT,
+    DOCS_DIR,
     PROPERTY_TYPE_LABELS,
     format_address,
     generate_index_html,
     generate_report_html,
     geocode_postcodes,
-    DATA_DIR_ROOT,
-    DOCS_DIR,
 )
 
 DOCS_DIR.mkdir(parents=True, exist_ok=True)
