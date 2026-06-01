@@ -2,7 +2,7 @@
 
 ## Validation Gate
 
-After making any changes in this repository, run Ruff before handing the work back:
+After making any changes to Python code in this repository, run Ruff before handing the work back:
 
 ```sh
 uv run ruff format --check .
