@@ -3,80 +3,233 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>House Sales Report &mdash; 2024-07-01</title>
+  <title>House Sales &mdash; 1 July 2024</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; display: flex; flex-direction: column; }
-    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; flex-shrink: 0; position: relative; }
-    header h1 { font-size: 1.5rem; font-weight: 600; }
-    header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
-    header a:hover { text-decoration: underline; }
-    header .repo-link { position: absolute; top: 1.5rem; right: 2rem; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-text { min-width: 0; }
+    .eyebrow {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .back-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+    .count-pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .repo-link {
+      margin-left: auto;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .repo-link:hover { color: var(--accent); }
     .content { display: flex; flex: 1; min-height: 0; }
-    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
-    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-    .sidebar ul { list-style: none; }
-    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
-    .sidebar li:hover { background: #f9f9f9; }
+    .sidebar {
+      width: 420px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0.75rem;
+    }
+    .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .sidebar li {
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sidebar li:hover, .sidebar li:focus-visible, .sidebar li.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      outline: none;
+    }
+    .sidebar .address { display: block; font-size: 0.85rem; font-weight: 600; line-height: 1.35; }
+    .sidebar .meta {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .sidebar .price { color: var(--accent); font-weight: 700; }
+    .sidebar .dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.5; }
     #map { flex: 1; }
+    .leaflet-popup-content-wrapper {
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+      font-family: inherit;
+    }
+    .leaflet-popup-content { margin: 0.8rem 1rem; font-size: 0.8rem; line-height: 1.5; }
+    .popup-address { font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 0.2rem; }
+    .popup-price { color: var(--accent); font-weight: 700; }
+    @media (max-width: 700px) {
+      html, body { overflow: auto; }
+      header { flex-wrap: wrap; row-gap: 0.5rem; }
+      .content { flex-direction: column-reverse; }
+      .sidebar { width: 100%; border-right: none; border-top: 1px solid var(--border); }
+      #map { min-height: 55vh; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <a href="index.html">&larr; All reports</a>
-    <h1>House Sales Report &mdash; 2024-07-01</h1>
+    <a class="back-link" href="index.html" aria-label="All reports">&larr;</a>
+    <div class="header-text">
+      <span class="eyebrow">House Sales Report</span>
+      <h1>1 July 2024</h1>
+    </div>
+    <span class="count-pill">16 new sales</span>
     <a class="repo-link" href="https://github.com/simonwhitaker/house-sales-simple">View on GitHub</a>
   </header>
   <div class="content">
     <div class="sidebar">
-      <p class="summary">16 new sale(s) detected.</p>
       <ul>
-        <li data-index="0">13 Glenby Avenue, L23 0QA</li>
-        <li data-index="1">12 Rutherglen Avenue, L23 0QB</li>
-        <li data-index="2">27 Buttermere Gardens, L23 0SE</li>
-        <li data-index="3">23 Nazeby Avenue, L23 0SN</li>
-        <li data-index="4">7 The Precincts, L23 0TP</li>
-        <li data-index="5">5 Morningside, L23 0UN</li>
-        <li data-index="6">79 Runnells Lane, L23 1XJ</li>
-        <li data-index="7">12 Woodland View, L23 4UH</li>
-        <li data-index="8">19 Coronation Road, L23 5RD</li>
-        <li data-index="9">49 Regent Road, L23 5SU</li>
-        <li data-index="10">54 York Road, L23 5TT</li>
-        <li data-index="11">Flat 5, Drummoyne Court, The Serpentine North, L23 6UT</li>
-        <li data-index="12">28 Cambridge Road, L23 7TY</li>
-        <li data-index="13">Waterside, 28, Victoria Road West, L23 8UQ</li>
-        <li data-index="14">20 Forefield Lane, L23 9TH</li>
-        <li data-index="15">15 Sorany Close, L23 9UU</li>
+        <li data-index="0" tabindex="0">
+          <span class="address">13 Glenby Avenue, L23 0QA</span>
+          <span class="meta"><span class="price">£262,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>12 January 2024</span>
+        </li>
+        <li data-index="1" tabindex="0">
+          <span class="address">12 Rutherglen Avenue, L23 0QB</span>
+          <span class="meta"><span class="price">£212,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>29 January 2024</span>
+        </li>
+        <li data-index="2" tabindex="0">
+          <span class="address">27 Buttermere Gardens, L23 0SE</span>
+          <span class="meta"><span class="price">£225,000</span><span class="dot"></span>Terraced<span class="dot"></span>22 January 2024</span>
+        </li>
+        <li data-index="3" tabindex="0">
+          <span class="address">23 Nazeby Avenue, L23 0SN</span>
+          <span class="meta"><span class="price">£253,500</span><span class="dot"></span>Semi-detached<span class="dot"></span>29 April 2024</span>
+        </li>
+        <li data-index="4" tabindex="0">
+          <span class="address">7 The Precincts, L23 0TP</span>
+          <span class="meta"><span class="price">£288,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>4 January 2024</span>
+        </li>
+        <li data-index="5" tabindex="0">
+          <span class="address">5 Morningside, L23 0UN</span>
+          <span class="meta"><span class="price">£265,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>27 March 2024</span>
+        </li>
+        <li data-index="6" tabindex="0">
+          <span class="address">79 Runnells Lane, L23 1XJ</span>
+          <span class="meta"><span class="price">£200,000</span><span class="dot"></span>Detached<span class="dot"></span>8 January 2024</span>
+        </li>
+        <li data-index="7" tabindex="0">
+          <span class="address">12 Woodland View, L23 4UH</span>
+          <span class="meta"><span class="price">£325,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>10 January 2024</span>
+        </li>
+        <li data-index="8" tabindex="0">
+          <span class="address">19 Coronation Road, L23 5RD</span>
+          <span class="meta"><span class="price">£271,500</span><span class="dot"></span>Terraced<span class="dot"></span>19 January 2024</span>
+        </li>
+        <li data-index="9" tabindex="0">
+          <span class="address">49 Regent Road, L23 5SU</span>
+          <span class="meta"><span class="price">£299,950</span><span class="dot"></span>Semi-detached<span class="dot"></span>26 January 2024</span>
+        </li>
+        <li data-index="10" tabindex="0">
+          <span class="address">54 York Road, L23 5TT</span>
+          <span class="meta"><span class="price">£215,000</span><span class="dot"></span>Terraced<span class="dot"></span>14 February 2024</span>
+        </li>
+        <li data-index="11" tabindex="0">
+          <span class="address">Flat 5, Drummoyne Court, The Serpentine North, L23 6UT</span>
+          <span class="meta"><span class="price">£110,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>10 May 2024</span>
+        </li>
+        <li data-index="12" tabindex="0">
+          <span class="address">28 Cambridge Road, L23 7TY</span>
+          <span class="meta"><span class="price">£400,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>15 May 2024</span>
+        </li>
+        <li data-index="13" tabindex="0">
+          <span class="address">Waterside, 28, Victoria Road West, L23 8UQ</span>
+          <span class="meta"><span class="price">£585,000</span><span class="dot"></span>Terraced<span class="dot"></span>17 April 2024</span>
+        </li>
+        <li data-index="14" tabindex="0">
+          <span class="address">20 Forefield Lane, L23 9TH</span>
+          <span class="meta"><span class="price">£315,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>7 March 2024</span>
+        </li>
+        <li data-index="15" tabindex="0">
+          <span class="address">15 Sorany Close, L23 9UU</span>
+          <span class="meta"><span class="price">£175,000</span><span class="dot"></span>Terraced<span class="dot"></span>22 January 2024</span>
+        </li>
       </ul>
     </div>
     <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    var sales = [{"address": "13 Glenby Avenue, L23 0QA", "lat": 53.482232, "lng": -3.014845, "price": "262000", "date": "2024-01-12", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "12 Rutherglen Avenue, L23 0QB", "lat": 53.481536, "lng": -3.016335, "price": "212000", "date": "2024-01-29", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "27 Buttermere Gardens, L23 0SE", "lat": 53.482745, "lng": -3.012672, "price": "225000", "date": "2024-01-22", "type": "Terraced", "postcode_area": "L23"}, {"address": "23 Nazeby Avenue, L23 0SN", "lat": 53.486046, "lng": -3.010309, "price": "253500", "date": "2024-04-29", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "7 The Precincts, L23 0TP", "lat": 53.490199, "lng": -3.019783, "price": "288000", "date": "2024-01-04", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "5 Morningside, L23 0UN", "lat": 53.485722, "lng": -3.014566, "price": "265000", "date": "2024-03-27", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "79 Runnells Lane, L23 1XJ", "lat": 53.49662, "lng": -2.993858, "price": "200000", "date": "2024-01-08", "type": "Detached", "postcode_area": "L23"}, {"address": "12 Woodland View, L23 4UH", "lat": 53.504104, "lng": -3.00715, "price": "325000", "date": "2024-01-10", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "19 Coronation Road, L23 5RD", "lat": 53.489068, "lng": -3.030125, "price": "271500", "date": "2024-01-19", "type": "Terraced", "postcode_area": "L23"}, {"address": "49 Regent Road, L23 5SU", "lat": 53.487991, "lng": -3.029948, "price": "299950", "date": "2024-01-26", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "54 York Road, L23 5TT", "lat": 53.491286, "lng": -3.021964, "price": "215000", "date": "2024-02-14", "type": "Terraced", "postcode_area": "L23"}, {"address": "Flat 5, Drummoyne Court, The Serpentine North, L23 6UT", "lat": 53.49576, "lng": -3.051345, "price": "110000", "date": "2024-05-10", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "28 Cambridge Road, L23 7TY", "lat": 53.491962, "lng": -3.03327, "price": "400000", "date": "2024-05-15", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Waterside, 28, Victoria Road West, L23 8UQ", "lat": 53.490544, "lng": -3.032964, "price": "585000", "date": "2024-04-17", "type": "Terraced", "postcode_area": "L23"}, {"address": "20 Forefield Lane, L23 9TH", "lat": 53.493304, "lng": -3.012969, "price": "315000", "date": "2024-03-07", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "15 Sorany Close, L23 9UU", "lat": 53.49734, "lng": -3.003417, "price": "175000", "date": "2024-01-22", "type": "Terraced", "postcode_area": "L23"}];
+    var sales = [{"address": "13 Glenby Avenue, L23 0QA", "lat": 53.482232, "lng": -3.014845, "price": "262000", "date": "12 January 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "12 Rutherglen Avenue, L23 0QB", "lat": 53.481536, "lng": -3.016335, "price": "212000", "date": "29 January 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "27 Buttermere Gardens, L23 0SE", "lat": 53.482745, "lng": -3.012672, "price": "225000", "date": "22 January 2024", "type": "Terraced", "postcode_area": "L23"}, {"address": "23 Nazeby Avenue, L23 0SN", "lat": 53.486046, "lng": -3.010309, "price": "253500", "date": "29 April 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "7 The Precincts, L23 0TP", "lat": 53.490199, "lng": -3.019783, "price": "288000", "date": "4 January 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "5 Morningside, L23 0UN", "lat": 53.485722, "lng": -3.014566, "price": "265000", "date": "27 March 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "79 Runnells Lane, L23 1XJ", "lat": 53.49662, "lng": -2.993858, "price": "200000", "date": "8 January 2024", "type": "Detached", "postcode_area": "L23"}, {"address": "12 Woodland View, L23 4UH", "lat": 53.504104, "lng": -3.00715, "price": "325000", "date": "10 January 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "19 Coronation Road, L23 5RD", "lat": 53.489068, "lng": -3.030125, "price": "271500", "date": "19 January 2024", "type": "Terraced", "postcode_area": "L23"}, {"address": "49 Regent Road, L23 5SU", "lat": 53.487991, "lng": -3.029948, "price": "299950", "date": "26 January 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "54 York Road, L23 5TT", "lat": 53.491286, "lng": -3.021964, "price": "215000", "date": "14 February 2024", "type": "Terraced", "postcode_area": "L23"}, {"address": "Flat 5, Drummoyne Court, The Serpentine North, L23 6UT", "lat": 53.49576, "lng": -3.051345, "price": "110000", "date": "10 May 2024", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "28 Cambridge Road, L23 7TY", "lat": 53.491962, "lng": -3.03327, "price": "400000", "date": "15 May 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Waterside, 28, Victoria Road West, L23 8UQ", "lat": 53.490544, "lng": -3.032964, "price": "585000", "date": "17 April 2024", "type": "Terraced", "postcode_area": "L23"}, {"address": "20 Forefield Lane, L23 9TH", "lat": 53.493304, "lng": -3.012969, "price": "315000", "date": "7 March 2024", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "15 Sorany Close, L23 9UU", "lat": 53.49734, "lng": -3.003417, "price": "175000", "date": "22 January 2024", "type": "Terraced", "postcode_area": "L23"}];
     var map = L.map('map').setView([53.48, -3.04], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19
     }).addTo(map);
-    var defaultIcon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
-    var redIcon = L.icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
+    var baseStyle = { radius: 8, color: '#4f46e5', weight: 2, fillColor: '#4f46e5', fillOpacity: 0.35 };
+    var activeStyle = { radius: 11, color: '#312e81', weight: 3, fillColor: '#4f46e5', fillOpacity: 0.75 };
     var bounds = [];
     var markers = {};
     sales.forEach(function(s, i) {
-      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
-      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
-      marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
+      if (s.lat === null || s.lng === null) return;
+      var marker = L.circleMarker([s.lat, s.lng], baseStyle).addTo(map);
+      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'Price N/A';
+      marker.bindPopup(
+        '<span class="popup-address">' + s.address + '</span>' +
+        '<span class="popup-price">' + price + '</span><br>' +
+        s.type + '<br>Sold ' + s.date
+      );
       bounds.push([s.lat, s.lng]);
       markers[i] = marker;
     });
@@ -86,10 +239,16 @@
     document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
       var idx = Number(li.getAttribute('data-index'));
       li.addEventListener('mouseenter', function() {
-        if (markers[idx]) markers[idx].setIcon(redIcon);
+        if (markers[idx]) markers[idx].setStyle(activeStyle);
       });
       li.addEventListener('mouseleave', function() {
-        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+        if (markers[idx]) markers[idx].setStyle(baseStyle);
+      });
+      li.addEventListener('click', function() {
+        if (markers[idx]) {
+          map.panTo(markers[idx].getLatLng());
+          markers[idx].openPopup();
+        }
       });
     })
   </script>

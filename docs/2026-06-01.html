@@ -3,103 +3,325 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>House Sales Report &mdash; 2026-06-01</title>
+  <title>House Sales &mdash; 1 June 2026</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; display: flex; flex-direction: column; }
-    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; flex-shrink: 0; position: relative; }
-    header h1 { font-size: 1.5rem; font-weight: 600; }
-    header a { color: #ecf0f1; text-decoration: none; font-size: 0.9rem; }
-    header a:hover { text-decoration: underline; }
-    header .repo-link { position: absolute; top: 1.5rem; right: 2rem; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-text { min-width: 0; }
+    .eyebrow {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .back-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+    .count-pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .repo-link {
+      margin-left: auto;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .repo-link:hover { color: var(--accent); }
     .content { display: flex; flex: 1; min-height: 0; }
-    .sidebar { width: 440px; flex-shrink: 0; overflow-y: auto; background: white; border-right: 1px solid #ddd; }
-    .sidebar .summary { padding: 0.6rem 1rem; color: #666; font-size: 0.8rem; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-    .sidebar ul { list-style: none; }
-    .sidebar li { padding: 0.5rem 1rem; border-bottom: 1px solid #eee; font-size: 0.85rem; cursor: pointer; }
-    .sidebar li:hover { background: #f9f9f9; }
+    .sidebar {
+      width: 420px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0.75rem;
+    }
+    .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .sidebar li {
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sidebar li:hover, .sidebar li:focus-visible, .sidebar li.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      outline: none;
+    }
+    .sidebar .address { display: block; font-size: 0.85rem; font-weight: 600; line-height: 1.35; }
+    .sidebar .meta {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .sidebar .price { color: var(--accent); font-weight: 700; }
+    .sidebar .dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.5; }
     #map { flex: 1; }
+    .leaflet-popup-content-wrapper {
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+      font-family: inherit;
+    }
+    .leaflet-popup-content { margin: 0.8rem 1rem; font-size: 0.8rem; line-height: 1.5; }
+    .popup-address { font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 0.2rem; }
+    .popup-price { color: var(--accent); font-weight: 700; }
+    @media (max-width: 700px) {
+      html, body { overflow: auto; }
+      header { flex-wrap: wrap; row-gap: 0.5rem; }
+      .content { flex-direction: column-reverse; }
+      .sidebar { width: 100%; border-right: none; border-top: 1px solid var(--border); }
+      #map { min-height: 55vh; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <a href="index.html">&larr; All reports</a>
-    <h1>House Sales Report &mdash; 2026-06-01</h1>
+    <a class="back-link" href="index.html" aria-label="All reports">&larr;</a>
+    <div class="header-text">
+      <span class="eyebrow">House Sales Report</span>
+      <h1>1 June 2026</h1>
+    </div>
+    <span class="count-pill">39 new sales</span>
     <a class="repo-link" href="https://github.com/simonwhitaker/house-sales-simple">View on GitHub</a>
   </header>
   <div class="content">
     <div class="sidebar">
-      <p class="summary">39 new sale(s) detected.</p>
       <ul>
-        <li data-index="0">8 Curzon Road, L22 0NL</li>
-        <li data-index="1">27 Argo Road, L22 0NN</li>
-        <li data-index="2">15 Willoughby Road, L22 0NP</li>
-        <li data-index="3">32 Brooke Road East, L22 2AW</li>
-        <li data-index="4">Flat 1, Angra Bank, Bramhall Road, L22 3XA</li>
-        <li data-index="5">4 Ronald Road, L22 3XU</li>
-        <li data-index="6">29 Brooklands Avenue, L22 3XY</li>
-        <li data-index="7">7B Stuart Road, L22 4QR</li>
-        <li data-index="8">8 Milton Road, L22 4RF</li>
-        <li data-index="9">Flat 9, Mount Pleasant Flats, 53, Mount Pleasant, L22 5PL</li>
-        <li data-index="10">28 Sandheys Avenue, L22 7RP</li>
-        <li data-index="11">28 Albert Road, L22 8QT</li>
-        <li data-index="12">122 Stuart Road, L23 0QQ</li>
-        <li data-index="13">193 Liverpool Road, L23 0RX</li>
-        <li data-index="14">20 Derwent Road, L23 0SX</li>
-        <li data-index="15">5 Seafield Avenue, L23 0TG</li>
-        <li data-index="16">40 Seafield Avenue, L23 0TQ</li>
-        <li data-index="17">19 Halifax Crescent, L23 1TH</li>
-        <li data-index="18">Flat 30, Grove Court, 20, Moor Lane, L23 2AA</li>
-        <li data-index="19">15 Old Farm Road, L23 2RZ</li>
-        <li data-index="20">15 Mayfair Avenue, L23 2TL</li>
-        <li data-index="21">84A Woodend Avenue, L23 2UB</li>
-        <li data-index="22">136A Moor Lane, L23 2UQ</li>
-        <li data-index="23">136 Moor Drive, L23 2UT</li>
-        <li data-index="24">21 Ascot Park, L23 2XH</li>
-        <li data-index="25">20 Tudor Road, L23 3DH</li>
-        <li data-index="26">4 The Crescent, L23 4TA</li>
-        <li data-index="27">13 Kimberley Avenue, L23 5SX</li>
-        <li data-index="28">11 Everest Road, L23 5TN</li>
-        <li data-index="29">Flat 11, The Knowles, 2, Blundellsands Road West, L23 6AB</li>
-        <li data-index="30">Flat 7, The Knowles, 2, Blundellsands Road West, L23 6AB</li>
-        <li data-index="31">Flat 1, Weston Court, Burbo Bank Road South, L23 6SR</li>
-        <li data-index="32">Apartment 6, Kestrel Court, 19, Burbo Bank Road, L23 6TQ</li>
-        <li data-index="33">5 Ingle Green, L23 6XY</li>
-        <li data-index="34">52B Alexandra Road, L23 7TF</li>
-        <li data-index="35">17 Victoria Road, L23 7XY</li>
-        <li data-index="36">10 Hall Road East, L23 8TS</li>
-        <li data-index="37">8 Larchfield Road, L23 9UX</li>
-        <li data-index="38">45 Sharples Crescent, L23 9YG</li>
+        <li data-index="0" tabindex="0">
+          <span class="address">8 Curzon Road, L22 0NL</span>
+          <span class="meta"><span class="price">£215,000</span><span class="dot"></span>Terraced<span class="dot"></span>13 April 2026</span>
+        </li>
+        <li data-index="1" tabindex="0">
+          <span class="address">27 Argo Road, L22 0NN</span>
+          <span class="meta"><span class="price">£230,000</span><span class="dot"></span>Terraced<span class="dot"></span>17 April 2026</span>
+        </li>
+        <li data-index="2" tabindex="0">
+          <span class="address">15 Willoughby Road, L22 0NP</span>
+          <span class="meta"><span class="price">£266,000</span><span class="dot"></span>Terraced<span class="dot"></span>26 March 2026</span>
+        </li>
+        <li data-index="3" tabindex="0">
+          <span class="address">32 Brooke Road East, L22 2AW</span>
+          <span class="meta"><span class="price">£285,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="4" tabindex="0">
+          <span class="address">Flat 1, Angra Bank, Bramhall Road, L22 3XA</span>
+          <span class="meta"><span class="price">£160,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="5" tabindex="0">
+          <span class="address">4 Ronald Road, L22 3XU</span>
+          <span class="meta"><span class="price">£375,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="6" tabindex="0">
+          <span class="address">29 Brooklands Avenue, L22 3XY</span>
+          <span class="meta"><span class="price">£238,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="7" tabindex="0">
+          <span class="address">7B Stuart Road, L22 4QR</span>
+          <span class="meta"><span class="price">£130,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>13 March 2026</span>
+        </li>
+        <li data-index="8" tabindex="0">
+          <span class="address">8 Milton Road, L22 4RF</span>
+          <span class="meta"><span class="price">£210,000</span><span class="dot"></span>Terraced<span class="dot"></span>19 December 2025</span>
+        </li>
+        <li data-index="9" tabindex="0">
+          <span class="address">Flat 9, Mount Pleasant Flats, 53, Mount Pleasant, L22 5PL</span>
+          <span class="meta"><span class="price">£88,500</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>20 April 2026</span>
+        </li>
+        <li data-index="10" tabindex="0">
+          <span class="address">28 Sandheys Avenue, L22 7RP</span>
+          <span class="meta"><span class="price">£270,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>14 April 2026</span>
+        </li>
+        <li data-index="11" tabindex="0">
+          <span class="address">28 Albert Road, L22 8QT</span>
+          <span class="meta"><span class="price">£285,000</span><span class="dot"></span>Terraced<span class="dot"></span>10 April 2026</span>
+        </li>
+        <li data-index="12" tabindex="0">
+          <span class="address">122 Stuart Road, L23 0QQ</span>
+          <span class="meta"><span class="price">£260,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="13" tabindex="0">
+          <span class="address">193 Liverpool Road, L23 0RX</span>
+          <span class="meta"><span class="price">£375,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>22 April 2026</span>
+        </li>
+        <li data-index="14" tabindex="0">
+          <span class="address">20 Derwent Road, L23 0SX</span>
+          <span class="meta"><span class="price">£250,000</span><span class="dot"></span>Terraced<span class="dot"></span>30 March 2026</span>
+        </li>
+        <li data-index="15" tabindex="0">
+          <span class="address">5 Seafield Avenue, L23 0TG</span>
+          <span class="meta"><span class="price">£228,000</span><span class="dot"></span>Terraced<span class="dot"></span>13 March 2026</span>
+        </li>
+        <li data-index="16" tabindex="0">
+          <span class="address">40 Seafield Avenue, L23 0TQ</span>
+          <span class="meta"><span class="price">£325,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="17" tabindex="0">
+          <span class="address">19 Halifax Crescent, L23 1TH</span>
+          <span class="meta"><span class="price">£255,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>13 March 2026</span>
+        </li>
+        <li data-index="18" tabindex="0">
+          <span class="address">Flat 30, Grove Court, 20, Moor Lane, L23 2AA</span>
+          <span class="meta"><span class="price">£165,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>7 April 2026</span>
+        </li>
+        <li data-index="19" tabindex="0">
+          <span class="address">15 Old Farm Road, L23 2RZ</span>
+          <span class="meta"><span class="price">£330,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 April 2026</span>
+        </li>
+        <li data-index="20" tabindex="0">
+          <span class="address">15 Mayfair Avenue, L23 2TL</span>
+          <span class="meta"><span class="price">£250,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="21" tabindex="0">
+          <span class="address">84A Woodend Avenue, L23 2UB</span>
+          <span class="meta"><span class="price">£122,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>10 April 2026</span>
+        </li>
+        <li data-index="22" tabindex="0">
+          <span class="address">136A Moor Lane, L23 2UQ</span>
+          <span class="meta"><span class="price">£478,000</span><span class="dot"></span>Detached<span class="dot"></span>1 April 2026</span>
+        </li>
+        <li data-index="23" tabindex="0">
+          <span class="address">136 Moor Drive, L23 2UT</span>
+          <span class="meta"><span class="price">£358,500</span><span class="dot"></span>Semi-detached<span class="dot"></span>23 January 2026</span>
+        </li>
+        <li data-index="24" tabindex="0">
+          <span class="address">21 Ascot Park, L23 2XH</span>
+          <span class="meta"><span class="price">£410,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>7 April 2026</span>
+        </li>
+        <li data-index="25" tabindex="0">
+          <span class="address">20 Tudor Road, L23 3DH</span>
+          <span class="meta"><span class="price">£350,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="26" tabindex="0">
+          <span class="address">4 The Crescent, L23 4TA</span>
+          <span class="meta"><span class="price">£150,000</span><span class="dot"></span>Other<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="27" tabindex="0">
+          <span class="address">13 Kimberley Avenue, L23 5SX</span>
+          <span class="meta"><span class="price">£295,000</span><span class="dot"></span>Terraced<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="28" tabindex="0">
+          <span class="address">11 Everest Road, L23 5TN</span>
+          <span class="meta"><span class="price">£440,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>20 February 2026</span>
+        </li>
+        <li data-index="29" tabindex="0">
+          <span class="address">Flat 11, The Knowles, 2, Blundellsands Road West, L23 6AB</span>
+          <span class="meta"><span class="price">£235,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="30" tabindex="0">
+          <span class="address">Flat 7, The Knowles, 2, Blundellsands Road West, L23 6AB</span>
+          <span class="meta"><span class="price">£235,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>27 March 2026</span>
+        </li>
+        <li data-index="31" tabindex="0">
+          <span class="address">Flat 1, Weston Court, Burbo Bank Road South, L23 6SR</span>
+          <span class="meta"><span class="price">£320,000</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>10 April 2026</span>
+        </li>
+        <li data-index="32" tabindex="0">
+          <span class="address">Apartment 6, Kestrel Court, 19, Burbo Bank Road, L23 6TQ</span>
+          <span class="meta"><span class="price">£289,995</span><span class="dot"></span>Flat/Maisonette<span class="dot"></span>26 February 2026</span>
+        </li>
+        <li data-index="33" tabindex="0">
+          <span class="address">5 Ingle Green, L23 6XY</span>
+          <span class="meta"><span class="price">£480,000</span><span class="dot"></span>Detached<span class="dot"></span>20 March 2026</span>
+        </li>
+        <li data-index="34" tabindex="0">
+          <span class="address">52B Alexandra Road, L23 7TF</span>
+          <span class="meta"><span class="price">£230,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>8 December 2025</span>
+        </li>
+        <li data-index="35" tabindex="0">
+          <span class="address">17 Victoria Road, L23 7XY</span>
+          <span class="meta"><span class="price">£177,000</span><span class="dot"></span>Terraced<span class="dot"></span>27 February 2026</span>
+        </li>
+        <li data-index="36" tabindex="0">
+          <span class="address">10 Hall Road East, L23 8TS</span>
+          <span class="meta"><span class="price">£760,000</span><span class="dot"></span>Detached<span class="dot"></span>1 April 2026</span>
+        </li>
+        <li data-index="37" tabindex="0">
+          <span class="address">8 Larchfield Road, L23 9UX</span>
+          <span class="meta"><span class="price">£200,000</span><span class="dot"></span>Terraced<span class="dot"></span>31 March 2026</span>
+        </li>
+        <li data-index="38" tabindex="0">
+          <span class="address">45 Sharples Crescent, L23 9YG</span>
+          <span class="meta"><span class="price">£206,000</span><span class="dot"></span>Semi-detached<span class="dot"></span>16 February 2026</span>
+        </li>
       </ul>
     </div>
     <div id="map"></div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    var sales = [{"address": "8 Curzon Road, L22 0NL", "lat": 53.476233, "lng": -3.024766, "price": "215000", "date": "2026-04-13", "type": "Terraced", "postcode_area": "L22"}, {"address": "27 Argo Road, L22 0NN", "lat": 53.476846, "lng": -3.027719, "price": "230000", "date": "2026-04-17", "type": "Terraced", "postcode_area": "L22"}, {"address": "15 Willoughby Road, L22 0NP", "lat": 53.476405, "lng": -3.024545, "price": "266000", "date": "2026-03-26", "type": "Terraced", "postcode_area": "L22"}, {"address": "32 Brooke Road East, L22 2AW", "lat": 53.482796, "lng": -3.031902, "price": "285000", "date": "2026-03-20", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "Flat 1, Angra Bank, Bramhall Road, L22 3XA", "lat": 53.473647, "lng": -3.020214, "price": "160000", "date": "2026-03-27", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "4 Ronald Road, L22 3XU", "lat": 53.475631, "lng": -3.017384, "price": "375000", "date": "2026-03-27", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "29 Brooklands Avenue, L22 3XY", "lat": 53.473009, "lng": -3.01803, "price": "238000", "date": "2026-03-20", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "7B Stuart Road, L22 4QR", "lat": 53.480282, "lng": -3.019017, "price": "130000", "date": "2026-03-13", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "8 Milton Road, L22 4RF", "lat": 53.480509, "lng": -3.020831, "price": "210000", "date": "2025-12-19", "type": "Terraced", "postcode_area": "L22"}, {"address": "Flat 9, Mount Pleasant Flats, 53, Mount Pleasant, L22 5PL", "lat": 53.474949, "lng": -3.029813, "price": "88500", "date": "2026-04-20", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "28 Sandheys Avenue, L22 7RP", "lat": 53.478514, "lng": -3.036499, "price": "270000", "date": "2026-04-14", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "28 Albert Road, L22 8QT", "lat": 53.474285, "lng": -3.029691, "price": "285000", "date": "2026-04-10", "type": "Terraced", "postcode_area": "L22"}, {"address": "122 Stuart Road, L23 0QQ", "lat": 53.482741, "lng": -3.015294, "price": "260000", "date": "2026-03-20", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "193 Liverpool Road, L23 0RX", "lat": 53.4822, "lng": -3.022876, "price": "375000", "date": "2026-04-22", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "20 Derwent Road, L23 0SX", "lat": 53.483319, "lng": -3.012776, "price": "250000", "date": "2026-03-30", "type": "Terraced", "postcode_area": "L23"}, {"address": "5 Seafield Avenue, L23 0TG", "lat": 53.488513, "lng": -3.018295, "price": "228000", "date": "2026-03-13", "type": "Terraced", "postcode_area": "L23"}, {"address": "40 Seafield Avenue, L23 0TQ", "lat": 53.488327, "lng": -3.017989, "price": "325000", "date": "2026-03-20", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "19 Halifax Crescent, L23 1TH", "lat": 53.499197, "lng": -3.000687, "price": "255000", "date": "2026-03-13", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Flat 30, Grove Court, 20, Moor Lane, L23 2AA", "lat": 53.493102, "lng": -3.022957, "price": "165000", "date": "2026-04-07", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "15 Old Farm Road, L23 2RZ", "lat": 53.49191, "lng": -3.016236, "price": "330000", "date": "2026-04-20", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "15 Mayfair Avenue, L23 2TL", "lat": 53.495064, "lng": -3.024859, "price": "250000", "date": "2026-03-27", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "84A Woodend Avenue, L23 2UB", "lat": 53.498188, "lng": -3.025265, "price": "122000", "date": "2026-04-10", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "136A Moor Lane, L23 2UQ", "lat": 53.494227, "lng": -3.015433, "price": "478000", "date": "2026-04-01", "type": "Detached", "postcode_area": "L23"}, {"address": "136 Moor Drive, L23 2UT", "lat": 53.49288, "lng": -3.018475, "price": "358500", "date": "2026-01-23", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "21 Ascot Park, L23 2XH", "lat": 53.491242, "lng": -3.017697, "price": "410000", "date": "2026-04-07", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "20 Tudor Road, L23 3DH", "lat": 53.485218, "lng": -3.027319, "price": "350000", "date": "2026-03-20", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "4 The Crescent, L23 4TA", "lat": 53.499586, "lng": -3.005731, "price": "150000", "date": "2026-03-27", "type": "Other", "postcode_area": "L23"}, {"address": "13 Kimberley Avenue, L23 5SX", "lat": 53.487513, "lng": -3.028987, "price": "295000", "date": "2026-03-27", "type": "Terraced", "postcode_area": "L23"}, {"address": "11 Everest Road, L23 5TN", "lat": 53.488052, "lng": -3.025956, "price": "440000", "date": "2026-02-20", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Flat 11, The Knowles, 2, Blundellsands Road West, L23 6AB", "lat": 53.485028, "lng": -3.045082, "price": "235000", "date": "2026-03-27", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Flat 7, The Knowles, 2, Blundellsands Road West, L23 6AB", "lat": 53.485028, "lng": -3.045082, "price": "235000", "date": "2026-03-27", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Flat 1, Weston Court, Burbo Bank Road South, L23 6SR", "lat": 53.484305, "lng": -3.046556, "price": "320000", "date": "2026-04-10", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Apartment 6, Kestrel Court, 19, Burbo Bank Road, L23 6TQ", "lat": 53.488091, "lng": -3.050417, "price": "289995", "date": "2026-02-26", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "5 Ingle Green, L23 6XY", "lat": 53.494325, "lng": -3.053013, "price": "480000", "date": "2026-03-20", "type": "Detached", "postcode_area": "L23"}, {"address": "52B Alexandra Road, L23 7TF", "lat": 53.489916, "lng": -3.031818, "price": "230000", "date": "2025-12-08", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "17 Victoria Road, L23 7XY", "lat": 53.492425, "lng": -3.030673, "price": "177000", "date": "2026-02-27", "type": "Terraced", "postcode_area": "L23"}, {"address": "10 Hall Road East, L23 8TS", "lat": 53.50025, "lng": -3.041552, "price": "760000", "date": "2026-04-01", "type": "Detached", "postcode_area": "L23"}, {"address": "8 Larchfield Road, L23 9UX", "lat": 53.496953, "lng": -3.003498, "price": "200000", "date": "2026-03-31", "type": "Terraced", "postcode_area": "L23"}, {"address": "45 Sharples Crescent, L23 9YG", "lat": 53.487685, "lng": -3.012006, "price": "206000", "date": "2026-02-16", "type": "Semi-detached", "postcode_area": "L23"}];
+    var sales = [{"address": "8 Curzon Road, L22 0NL", "lat": 53.476233, "lng": -3.024766, "price": "215000", "date": "13 April 2026", "type": "Terraced", "postcode_area": "L22"}, {"address": "27 Argo Road, L22 0NN", "lat": 53.476846, "lng": -3.027719, "price": "230000", "date": "17 April 2026", "type": "Terraced", "postcode_area": "L22"}, {"address": "15 Willoughby Road, L22 0NP", "lat": 53.476405, "lng": -3.024545, "price": "266000", "date": "26 March 2026", "type": "Terraced", "postcode_area": "L22"}, {"address": "32 Brooke Road East, L22 2AW", "lat": 53.482796, "lng": -3.031902, "price": "285000", "date": "20 March 2026", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "Flat 1, Angra Bank, Bramhall Road, L22 3XA", "lat": 53.473647, "lng": -3.020214, "price": "160000", "date": "27 March 2026", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "4 Ronald Road, L22 3XU", "lat": 53.475631, "lng": -3.017384, "price": "375000", "date": "27 March 2026", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "29 Brooklands Avenue, L22 3XY", "lat": 53.473009, "lng": -3.01803, "price": "238000", "date": "20 March 2026", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "7B Stuart Road, L22 4QR", "lat": 53.480282, "lng": -3.019017, "price": "130000", "date": "13 March 2026", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "8 Milton Road, L22 4RF", "lat": 53.480509, "lng": -3.020831, "price": "210000", "date": "19 December 2025", "type": "Terraced", "postcode_area": "L22"}, {"address": "Flat 9, Mount Pleasant Flats, 53, Mount Pleasant, L22 5PL", "lat": 53.474949, "lng": -3.029813, "price": "88500", "date": "20 April 2026", "type": "Flat/Maisonette", "postcode_area": "L22"}, {"address": "28 Sandheys Avenue, L22 7RP", "lat": 53.478514, "lng": -3.036499, "price": "270000", "date": "14 April 2026", "type": "Semi-detached", "postcode_area": "L22"}, {"address": "28 Albert Road, L22 8QT", "lat": 53.474285, "lng": -3.029691, "price": "285000", "date": "10 April 2026", "type": "Terraced", "postcode_area": "L22"}, {"address": "122 Stuart Road, L23 0QQ", "lat": 53.482741, "lng": -3.015294, "price": "260000", "date": "20 March 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "193 Liverpool Road, L23 0RX", "lat": 53.4822, "lng": -3.022876, "price": "375000", "date": "22 April 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "20 Derwent Road, L23 0SX", "lat": 53.483319, "lng": -3.012776, "price": "250000", "date": "30 March 2026", "type": "Terraced", "postcode_area": "L23"}, {"address": "5 Seafield Avenue, L23 0TG", "lat": 53.488513, "lng": -3.018295, "price": "228000", "date": "13 March 2026", "type": "Terraced", "postcode_area": "L23"}, {"address": "40 Seafield Avenue, L23 0TQ", "lat": 53.488327, "lng": -3.017989, "price": "325000", "date": "20 March 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "19 Halifax Crescent, L23 1TH", "lat": 53.499197, "lng": -3.000687, "price": "255000", "date": "13 March 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Flat 30, Grove Court, 20, Moor Lane, L23 2AA", "lat": 53.493102, "lng": -3.022957, "price": "165000", "date": "7 April 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "15 Old Farm Road, L23 2RZ", "lat": 53.49191, "lng": -3.016236, "price": "330000", "date": "20 April 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "15 Mayfair Avenue, L23 2TL", "lat": 53.495064, "lng": -3.024859, "price": "250000", "date": "27 March 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "84A Woodend Avenue, L23 2UB", "lat": 53.498188, "lng": -3.025265, "price": "122000", "date": "10 April 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "136A Moor Lane, L23 2UQ", "lat": 53.494227, "lng": -3.015433, "price": "478000", "date": "1 April 2026", "type": "Detached", "postcode_area": "L23"}, {"address": "136 Moor Drive, L23 2UT", "lat": 53.49288, "lng": -3.018475, "price": "358500", "date": "23 January 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "21 Ascot Park, L23 2XH", "lat": 53.491242, "lng": -3.017697, "price": "410000", "date": "7 April 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "20 Tudor Road, L23 3DH", "lat": 53.485218, "lng": -3.027319, "price": "350000", "date": "20 March 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "4 The Crescent, L23 4TA", "lat": 53.499586, "lng": -3.005731, "price": "150000", "date": "27 March 2026", "type": "Other", "postcode_area": "L23"}, {"address": "13 Kimberley Avenue, L23 5SX", "lat": 53.487513, "lng": -3.028987, "price": "295000", "date": "27 March 2026", "type": "Terraced", "postcode_area": "L23"}, {"address": "11 Everest Road, L23 5TN", "lat": 53.488052, "lng": -3.025956, "price": "440000", "date": "20 February 2026", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "Flat 11, The Knowles, 2, Blundellsands Road West, L23 6AB", "lat": 53.485028, "lng": -3.045082, "price": "235000", "date": "27 March 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Flat 7, The Knowles, 2, Blundellsands Road West, L23 6AB", "lat": 53.485028, "lng": -3.045082, "price": "235000", "date": "27 March 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Flat 1, Weston Court, Burbo Bank Road South, L23 6SR", "lat": 53.484305, "lng": -3.046556, "price": "320000", "date": "10 April 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "Apartment 6, Kestrel Court, 19, Burbo Bank Road, L23 6TQ", "lat": 53.488091, "lng": -3.050417, "price": "289995", "date": "26 February 2026", "type": "Flat/Maisonette", "postcode_area": "L23"}, {"address": "5 Ingle Green, L23 6XY", "lat": 53.494325, "lng": -3.053013, "price": "480000", "date": "20 March 2026", "type": "Detached", "postcode_area": "L23"}, {"address": "52B Alexandra Road, L23 7TF", "lat": 53.489916, "lng": -3.031818, "price": "230000", "date": "8 December 2025", "type": "Semi-detached", "postcode_area": "L23"}, {"address": "17 Victoria Road, L23 7XY", "lat": 53.492425, "lng": -3.030673, "price": "177000", "date": "27 February 2026", "type": "Terraced", "postcode_area": "L23"}, {"address": "10 Hall Road East, L23 8TS", "lat": 53.50025, "lng": -3.041552, "price": "760000", "date": "1 April 2026", "type": "Detached", "postcode_area": "L23"}, {"address": "8 Larchfield Road, L23 9UX", "lat": 53.496953, "lng": -3.003498, "price": "200000", "date": "31 March 2026", "type": "Terraced", "postcode_area": "L23"}, {"address": "45 Sharples Crescent, L23 9YG", "lat": 53.487685, "lng": -3.012006, "price": "206000", "date": "16 February 2026", "type": "Semi-detached", "postcode_area": "L23"}];
     var map = L.map('map').setView([53.48, -3.04], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19
     }).addTo(map);
-    var defaultIcon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
-    var redIcon = L.icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
+    var baseStyle = { radius: 8, color: '#4f46e5', weight: 2, fillColor: '#4f46e5', fillOpacity: 0.35 };
+    var activeStyle = { radius: 11, color: '#312e81', weight: 3, fillColor: '#4f46e5', fillOpacity: 0.75 };
     var bounds = [];
     var markers = {};
     sales.forEach(function(s, i) {
-      var marker = L.marker([s.lat, s.lng], {icon: defaultIcon}).addTo(map);
-      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'N/A';
-      marker.bindPopup('<strong>' + s.address + '</strong><br>Date: ' + s.date + '<br>Price: ' + price + '<br>Type: ' + s.type);
+      if (s.lat === null || s.lng === null) return;
+      var marker = L.circleMarker([s.lat, s.lng], baseStyle).addTo(map);
+      var price = s.price ? '&pound;' + Number(s.price).toLocaleString() : 'Price N/A';
+      marker.bindPopup(
+        '<span class="popup-address">' + s.address + '</span>' +
+        '<span class="popup-price">' + price + '</span><br>' +
+        s.type + '<br>Sold ' + s.date
+      );
       bounds.push([s.lat, s.lng]);
       markers[i] = marker;
     });
@@ -109,10 +331,16 @@
     document.querySelectorAll('.sidebar li[data-index]').forEach(function(li) {
       var idx = Number(li.getAttribute('data-index'));
       li.addEventListener('mouseenter', function() {
-        if (markers[idx]) markers[idx].setIcon(redIcon);
+        if (markers[idx]) markers[idx].setStyle(activeStyle);
       });
       li.addEventListener('mouseleave', function() {
-        if (markers[idx]) markers[idx].setIcon(defaultIcon);
+        if (markers[idx]) markers[idx].setStyle(baseStyle);
+      });
+      li.addEventListener('click', function() {
+        if (markers[idx]) {
+          map.panTo(markers[idx].getLatLng());
+          markers[idx].openPopup();
+        }
       });
     })
   </script>
