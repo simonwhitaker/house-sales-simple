@@ -1,5 +1,41 @@
+shell: /bin/bash
 commands:
   update-deps:
     run: uv lock --upgrade
   regenerate-all:
     run: uv run python generate_from_existing.py
+
+  update-data:
+    description: Monthly job - fetch latest sales, prune old reports, commit and push
+    needs:
+      - check-main
+    run: |
+      set -e
+      uv run python main.py
+      # Keep the 6 most recent markdown reports
+      ls -1 reports/*.md 2>/dev/null | sort -r | tail -n +7 | xargs rm -f
+    then:
+      - publish-data
+
+  check-main:
+    internal: true
+    run: |
+      set -e
+      branch="$(git branch --show-current)"
+      if [ "$branch" != "main" ]; then
+        echo "Error: on branch '$branch'; switch to main first" >&2
+        exit 1
+      fi
+      git pull --ff-only
+
+  publish-data:
+    internal: true
+    run: |
+      set -e
+      git add data docs reports
+      if git diff --cached --quiet; then
+        echo "No changes to commit"
+        exit 0
+      fi
+      git commit -m "Update latest data"
+      git push origin main
